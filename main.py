@@ -6,13 +6,13 @@ import matplotlib.colors as colors
 import math
 
 SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
-lambda1 = 0.9  # proliferation rate of mF
-lambda2 = 0.8  # proliferation rate of M
-mu1 = 0.3  # removal rate of mF
+lambda1 = 0.9  # proliferation rate of mF (myofibroblast)
+lambda2 = 0.8  # proliferation rate of M (macrophages)
+mu1 = 0.3  # removal rate of mF 
 mu2 = 0.3  # removal rate of M
-K = 10 ** 6  # carrying capacity of mF
-k1 = 10 ** 9  # binding affinity of CSF
-k2 = 10 ** 9  # binding affinity of PDGF
+K = 10 ** 6  # carrying capacity of mF 
+k1 = 10 ** 9  # binding affinity of CSF (colony simulating factors)
+k2 = 10 ** 9  # binding affinity of PDGF (platelet-derived growth factor )
 # converted from paper to match units min -> day
 beta1 = 470 * 60 * 24 # max secretion rate of CSF by mF
 beta2 = 70 * 60 * 24  # max secretion rate of PDGF by M
