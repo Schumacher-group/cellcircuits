@@ -40,13 +40,14 @@ def nullcline_M(sM_mF):
     M = ((k2 + sM_CSF) / (alpha1 * sM_CSF)) * (beta1 * sM_mF - gamma * sM_CSF)
     return [sM_mF, M]
 
+def nulldiff(x):
+    return nullcline_M(x)[1] - nullcline_mF(x)[1]
+
 # finds intersection of nullclines, bad estimate
 def intersectionNull_bad(mFM_space):
-    def diff(x):
-        return nullcline_M(x)[1] - nullcline_mF(x)[1]
     mF_list = []
     for i in range(len(mFM_space) - 1):
-        if diff(mFM_space[i]) * diff(mFM_space[i + 1]) < 0:
+        if nulldiff(mFM_space[i]) * nulldiff(mFM_space[i + 1]) < 0 or nulldiff(mFM_space[i]) == 0:
             mF_list.append(mFM_space[i])
     return mF_list
 
