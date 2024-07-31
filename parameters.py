@@ -7,6 +7,7 @@ K = 10 ** 6  # carrying capacity of mF
 k1 = 10 ** 9  # binding affinity of CSF
 k2 = 10 ** 9  # binding affinity of PDGF
 
+
 # converted from paper to match units min -> day
 beta1 = 470 * 60 * 24 # max secretion rate of CSF by mF
 beta2 = 70 * 60 * 24  # max secretion rate of PDGF by M
