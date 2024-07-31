@@ -192,14 +192,16 @@ def cold_fibr(): # finds the cold fibrosis point
 
 coldfibr2 = [cold_fibr(), 1]
 
-def rev_mF_M(x,t):
+""""
+def rev_mF_M_rates(x,t):
     mF = x[0]
     M = x[1]
     CSF, PDGF = CSF_PDGF_steady([mF, M])
     d_mF_dt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
     d_M_dt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
     return [-d_mF_dt, -d_M_dt]
-
+"""
+    
 def myofib_macro_ODE_reverse(x, t):    # outputs reverse derivative
     # variables
     mF = x[0]
