@@ -29,30 +29,18 @@ def myofib_macro(x, t): # outputs list of gradients
     CSF = x[2]
     PDGF = x[3]
     # diff eqns
-    dmFdt= mF*(lambda1 * ((PDGF)/(k1 + PDGF))*(1-mF/K) -mu1)
-    dMdt = M*(lambda2*(CSF/(k2+CSF))-mu2)
-    dCSFdt = beta1*mF-alpha1*M*(CSF/(k2+CSF))-gamma*CSF
-    dPDGFdt= beta2*M+beta3*mF-alpha2*mF*(PDGF)/(k1+PDGF)-gamma*PDGF
+    d_mF_dt = mF*(lambda1 * ((PDGF)/(k1 + PDGF))*(1-mF/K) -mu1)
+    d_M_dt = M*(lambda2*(CSF/(k2+CSF))-mu2)
+    d_CSF_dt = beta1*mF-alpha1*M*(CSF/(k2+CSF))-gamma*CSF
+    d_PDGF_dt = beta2*M+beta3*mF-alpha2*mF*(PDGF)/(k1+PDGF)-gamma*PDGF
 
-    return [dmFdt, dMdt, dCSFdt, dPDGFdt]
+    return [d_mF_dt, d_M_dt, d_CSF_dt, d_PDGF_dt]
 
 # playing around with trajetories
 x0 = [6*10**3, 7*10**3] # initial point for trajectory
 x1 = [10**3, 10**3, 0, 0]
 
 t = np.linspace(0, 80, 1000)
-
-def derivatives(mF_M):
-    mF = mF_M[0]
-    M = mF_M[1]
-    CSF = mF_M[2]
-    PDGF = mF_M[3]
-    # diff eqns
-    dmFdt= mF*(lambda1 * ((PDGF)/(k1 + PDGF))*(1-mF/K) -mu1)
-    dMdt = M*(lambda2*(CSF/(k2+CSF))-mu2)
-    dCSFdt = beta1*mF-alpha1*M*(CSF/(k2+CSF))-gamma*CSF
-    dPDGFdt = beta2*M+beta3*mF-alpha2*mF*(PDGF)/(k1+PDGF)-gamma*PDGF
-    return (dmFdt, dMdt, dCSFdt,dPDGFdt)
 
 
 def CSF_PDGF_steady(x): # finds steady CSF and PDGF levels for given mF and M levels
@@ -78,9 +66,9 @@ def mF_M_rates(x, t):
     mF = x[0]
     M = x[1]
     CSF, PDGF = CSF_PDGF_steady([mF, M])
-    dmFdt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
-    dMdt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
-    return [dmFdt, dMdt]
+    d_mF_dt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
+    d_M_dt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
+    return [d_mF_dt, d_M_dt]
 
 
 x_ = odeint(mF_M_rates, x0, t)
@@ -208,9 +196,9 @@ def rev_mF_M(x,t):
     mF = x[0]
     M = x[1]
     CSF, PDGF = CSF_PDGF_steady([mF, M])
-    dmFdt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
-    dMdt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
-    return [-dmFdt, -dMdt]
+    d_mF_dt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
+    d_M_dt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
+    return [-d_mF_dt, -d_M_dt]
 
 def myofib_macro_ODE_reverse(x, t):    # outputs reverse derivative
     # variables
@@ -273,9 +261,9 @@ def mF_M_rates_array(exp_mF, exp_M, t):
     mF = 10**exp_mF
     M = 10**exp_M
     CSF, PDGF = CSF_PDGF_steady_array([mF, M])
-    dmFdt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
-    dMdt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
-    return dmFdt, dMdt
+    d_mF_dt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
+    d_M_dt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
+    return d_mF_dt, d_M_dt
 
 # plotting streamlines
 
