@@ -31,7 +31,7 @@ def mF_M_rates(exp_mF, exp_M, t):
     return d_mF_dt, d_M_dt
 
 def nullcline_mF(mF):
-    smF_PDGF = (mu1 * k *K) / (lambda1 * K - mu1 *K - mF *lambda1)
+    smF_PDGF = (mu1 * k1 *K) / (lambda1 * K - mu1 *K - mF *lambda1)
     smF_M = -1 / beta2 * (beta3 * mF - alpha2 * mF * smF_PDGF / (k1 + smF_PDGF) - gamma * smF_PDGF)
     return [mF, smF_M]
 
