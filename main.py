@@ -130,12 +130,13 @@ plt.yscale("log")
 
 
 
+def nulldiff(x):
+    return nullcline_M(x)[1] - nullcline_mF(x)[1]
+
 def intersectionNull_bad(): # finds intersection of nullclines, bad estimate
     mF_list = []
-    def diff(x):
-        return nullcline_M(x)[1] - nullcline_mF(x)[1]
     for i in range(len(mFM_space)-1):
-        if diff(mFM_space[i]) == 0 or diff(mFM_space[i]) * diff(mFM_space[i+1]) < 0:
+        if nulldiff(mFM_space[i]) == 0 or nulldiff(mFM_space[i]) * nulldiff(mFM_space[i+1]) < 0:
             mF_list.append(mFM_space[i])
     return mF_list
 
@@ -144,10 +145,6 @@ fpt_mF_bad = intersectionNull_bad()
 fpt_M_bad = [nullcline_M(i)[1] for i in fpt_mF_bad]
 print(intersectionNull_bad(), fpt_M_bad, "fixed point approximations where mF and M are nonzero")
 
-""""
-def nulldiff(x):
-    return nullcline_M(x)[1] - nullcline_mF(x)[1]
-"""
     
 # use initial fixed point approximations to find solutions for the unstable point and the hot fibrosis point
 uns_guess = fpt_mF_bad[0]
