@@ -3,7 +3,7 @@ from scipy.integrate import odeint
 from scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
-import math
+
 
 SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
 lambda1 = 0.9  # proliferation rate of mF (myofibroblast)
@@ -318,7 +318,6 @@ ax2.plot(uns_soln2[0], uns_soln2[1], marker = 'o', color = 'black')
 ax2.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
 ax2.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
 
-print(mF_M_rates(10))
 
 def theta(t): # heaviside step function
     if t >= 0:
