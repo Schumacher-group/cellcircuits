@@ -144,10 +144,11 @@ fpt_mF_bad = intersectionNull_bad()
 fpt_M_bad = [nullcline_M(i)[1] for i in fpt_mF_bad]
 print(intersectionNull_bad(), fpt_M_bad, "fixed point approximations where mF and M are nonzero")
 
-
+""""
 def nulldiff(x):
     return nullcline_M(x)[1] - nullcline_mF(x)[1]
-
+"""
+    
 # use initial fixed point approximations to find solutions for the unstable point and the hot fibrosis point
 uns_guess = fpt_mF_bad[0]
 second_guess = fpt_mF_bad[1]
