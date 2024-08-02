@@ -57,6 +57,12 @@ def cold_fibr():
                            (K / lambda1) * (lambda1 - mu1) * (beta3 - alpha2) - gamma * k1,
                            (K / lambda1) * (lambda1 - mu1 + beta3 - alpha2),
                            - mu1 * k1**2 * beta3 * K / lambda1])
+    """
+    PDGF_coeff = np.array([-gamma,
+                           (K / lambda1) * (lambda1 - mu1) * (beta3 - alpha2) - gamma * k1,
+                           (K * k1 / lambda1) * (beta3 * lambda1 - 2 * mu1 * beta3 + mu1 *alpha2),
+                           -k1**2 * mu1 * K * beta3 / lambda1])
+    """
     # rearranged from eqns in transparent methods
     coldPDGF = np.roots(PDGF_coeff)
     coldmF = []
