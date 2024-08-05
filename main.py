@@ -38,7 +38,7 @@ def myofib_macro(x, t): # outputs list of gradients
 
 # playing around with trajetories
 x0 = [6*10**3, 7*10**3] # initial point for trajectory
-x1 = [10**3, 10**3, 0, 0]
+
 
 t = np.linspace(0, 80, 1000)
 
@@ -178,19 +178,27 @@ print(myofib_macro(nullsoln4, t), "rates at unstable fixed pt")
 
 def cold_fibr(): # finds the cold fibrosis point
     # Set M = 0 in eqn 4, use eqn 1. solve system for PDGF, get a cubic
-    PDGF_coeff = np.array([-gamma, (K/lambda1)*(lambda1-mu1)*(beta3-alpha2)-gamma*k1,
-                           (K/lambda1)*(lambda1-mu1+beta3-alpha2), -mu1* k1**2 * beta3 * K/lambda1])
+    #PDGF_coeff = np.array([-gamma, (K/lambda1)*(lambda1-mu1)*(beta3-alpha2)-gamma*k1,
+     #                      (K/lambda1)*(lambda1-mu1+beta3-alpha2), -mu1* k1**2 * beta3 * K/lambda1])
                             # rearranged from eqns in transparent methods
+    
+    PDGF_coeff = np.array([-gamma,
+                          (K / lambda1) * (lambda1 - mu1) * (beta3 - alpha2) - gamma * k1,
+                          (K * k1 / lambda1) * (beta3 * lambda1 - 2 * mu1 * beta3 + mu1 *alpha2),
+                            -k1**2 * mu1 * K * beta3 / lambda1])
+    
     coldPDGF = np.roots(PDGF_coeff)
+    print("\n Roots of PDGF:", coldPDGF,"\n")
     coldmF = []
     for coldroot in coldPDGF:
         if np.isreal(coldroot):
             coldmF.append(K * ((lambda1-mu1)/(lambda1)-(mu1*k1)/(lambda1*np.real(coldroot)))) # finds mF value given PDGF value
-    return coldmF[0]
+    print("\n coldmF:", coldmF,"\n")
+    return coldmF[0] #was previously coldmF[0]
 
 coldfibr2 = [cold_fibr(), 1]
 
-""""
+"""" has same functionality as myofib_macro_ODE_reverse
 def rev_mF_M_rates(x,t):
     mF = x[0]
     M = x[1]
