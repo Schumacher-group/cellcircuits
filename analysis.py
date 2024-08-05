@@ -67,3 +67,19 @@ def cold_fibr():
     return coldmF[0]
 
 coldfibr2 = [cold_fibr(), 1]
+
+
+def time_taken(traj, t, hotfibr2, uns_soln2):
+    end_point = [0, 0]
+    for fixed_pt in [hotfibr2, uns_soln2]:
+        if (traj[-1][0] - fixed_pt[0])**2 + (traj[-1][1] - fixed_pt[1])**2 < (traj[-1][0] - end_point[0])**2 + (traj[-1][1] - end_point[1])**2:
+            end_point = fixed_pt 
+            for i in range(len(traj)):
+                if (traj[i][0] - end_point[0])**2 + (traj[i][1] - end_point[1])**2 < 1e-3 *((end_point[0])**2 + (end_point[1])**2) :
+                    return t[i] 
+    for i in range(len(traj)):
+        if ((traj[i][0]) ** 2 + (traj[i][1]) ** 2) < 1e-3:
+            return t[i]
+
+def time_taken_rd(traj, t, hotfibr2, uns_soln2): 
+    return round(time_taken(traj, t, hotfibr2, uns_soln2), 2)
