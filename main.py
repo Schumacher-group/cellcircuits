@@ -77,8 +77,6 @@ mF = x_[:, 0]
 M = x_[:, 1]
 
 
-mF_log = np.logspace(0, 7, 10)
-M_log = np.logspace(1, 7, 10)
 
 
 
