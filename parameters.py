@@ -1,3 +1,5 @@
+import numpy as np
+
 #Define Constants
 lambda1 = 0.9  # proliferation rate of mF
 lambda2 = 0.8  # proliferation rate of M
@@ -16,3 +18,8 @@ alpha1 = 940 *60 * 24 # max endocytosis rate of CSF by M
 alpha2 = 510 * 60 * 24   # max endocytosis rate of PDGF by mF
 gamma = 2  # degradation rate of growth factors
 A_0 = 10**6
+
+#time vector
+t = np.linspace(0, 80, 1000)
+
+SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
