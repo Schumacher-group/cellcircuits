@@ -45,6 +45,7 @@ def signal(t, start = 0, duration = 1, amplitude = 1):
     return amplitude * (theta(t) - theta(t - (start + duration)))
 
 
+
 def transient(t):
     return signal(t, start = 0, duration = 2, amplitude = A_0)
 
@@ -59,6 +60,8 @@ def sharp_signal(t):
 
 def one_signal(t, delta_t):
     return (A_0 * 4/ delta_t) * (theta(t) - theta(t - delta_t))
+
+
 
 #Generalised block signal function
 def block(t, amplitudes, signal_starting_points, signal_durations):
@@ -77,8 +80,14 @@ def blocks3(t):
     return 0.5 * one_signal(t, 2) + 0.3 * one_signal(t - 2, 2) + 0.2 * one_signal(t - 4, 2)
 
 
-#Adjusted derivatives with signals
-#added signal increaces macrophage rate
+#Generalized signal/block derivative function, added signal increaces macrophage rate
+def adjusted_derivatives_with_signal(state, t, signal_func):
+    derivatives = mF_M_rates(state, t)
+    derivatives[1] += signal_func(t)
+    return derivatives
+
+
+
 def transient_derivatives(state, t):
     derivatives = mF_M_rates(state, t)
     derivatives[1] += transient(t)
