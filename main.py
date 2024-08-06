@@ -97,23 +97,26 @@ mFM_space = np.logspace(0, 7, 10**4)
 # mFnull1, mFnull2, mFnull3 are intervals that do not contain any poles
 # smoothmF1 and smoothmF2 are intervals that contain poles
 mFnull1 = np.logspace(0, 5.7, 10**3)
-smoothmF1 = np.logspace(5.7, 5.85, 10**3)
+#smoothmF1 = np.logspace(5.7, 5.85, 10**3)
 mFnull2 = np.logspace(5.85, 5.95, 10**3)
-smoothmF2 = np.logspace(5.95, 6.05, 10**3)
+#smoothmF2 = np.logspace(5.95, 6.05, 10**3)
 mFnull3 = np.logspace(6.05, 7, 10**3)
 
 # straight lines to replace/ignore the sharp increase near the poles
 xsmooth1 = [10**5.7, 10**5.85]
 ysmooth1 = [nullcline_mF(pt)[1] for pt in xsmooth1]
-xsmooth2 = [10**5.95, 10**6.1]
-ysmooth2 = [nullcline_mF(pt)[1] for pt in xsmooth2]
+
+#Never used again
+#xsmooth2 = [10**5.95, 10**6.1]
+#ysmooth2 = [nullcline_mF(pt)[1] for pt in xsmooth2]
 
 
 
 
 plt.figure()
 plt.plot(nullcline_M(mFM_space)[0], nullcline_M(mFM_space)[1], 'r', label = 'Macrophage nullcline')
-#plt.plot(nullcline_mF(mFM_space)[0], nullcline_mF(mFM_space)[1], 'b')
+#plt.plot(nullcline_mF(mFM_space)[0], nullcline_mF(mFM_space)[1], 'g')
+#We have poles around 6.64*10^5 and 10^6
 plt.plot(nullcline_mF(mFnull1)[0], nullcline_mF(mFnull1)[1], 'b', label = 'Myofibroblasts nullcline')
 plt.plot(nullcline_mF(mFnull2)[0], nullcline_mF(mFnull2)[1], 'b')
 plt.plot(nullcline_mF(mFnull3)[0], nullcline_mF(mFnull3)[1], 'b')
@@ -125,7 +128,6 @@ plt.xlim((1, 10**7))
 plt.ylim((1, 10**7))
 plt.xscale("log")
 plt.yscale("log")
-
 
 
 def nulldiff(x):
@@ -192,7 +194,7 @@ def cold_fibr(): # finds the cold fibrosis point
         if np.isreal(coldroot):
             coldmF.append(K * ((lambda1-mu1)/(lambda1)-(mu1*k1)/(lambda1*np.real(coldroot)))) # finds mF value given PDGF value
     print("\n coldmF:", coldmF,"\n")
-    return coldmF[0] #was previously coldmF[0]
+    return coldmF[0] #why do we use coldmF[0]?
 
 coldfibr2 = [cold_fibr(), 1]
 
