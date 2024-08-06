@@ -133,7 +133,7 @@ plt.yscale("log")
 def nulldiff(x):
     return nullcline_M(x)[1] - nullcline_mF(x)[1]
 
-def intersectionNull_bad(): # finds intersection of nullclines, bad estimate
+def intersectionNull_bad(): # finds intersection of nullclines, bad estimate, only checking for change in sign of nullclines
     mF_list = []
     for i in range(len(mFM_space)-1):
         if nulldiff(mFM_space[i]) == 0 or nulldiff(mFM_space[i]) * nulldiff(mFM_space[i+1]) < 0:
@@ -146,34 +146,34 @@ fpt_M_bad = [nullcline_M(i)[1] for i in fpt_mF_bad]
 print(intersectionNull_bad(), fpt_M_bad, "fixed point approximations where mF and M are nonzero")
 
     
-# use initial fixed point approximations to find solutions for the unstable point and the hot fibrosis point
-uns_guess = fpt_mF_bad[0]
+# use initial, rough fixed point approximation to find solutions for the unstable point and the hot fibrosis point
+unstable_guess = fpt_mF_bad[0]
 second_guess = fpt_mF_bad[1]
 
 
-uns_soln = fsolve(nulldiff, uns_guess)
-uns_soln = uns_soln[0] # changes array to float
+unstable_soln = fsolve(nulldiff, unstable_guess)
+unstable_soln = unstable_soln[0] # changes array to float
 
 hotfibr = fsolve(nulldiff, second_guess)
 hotfibr = hotfibr[0]  # changes array to float
 
-print(uns_soln, "mF value at unstable fix pt")
+print(unstable_soln, "mF value at unstable fix pt")
 print(hotfibr, "mF value at hot fibrosis")
 
-uns_soln2 = nullcline_mF(uns_soln) # gives [mF, M] at unstable fixed point from mF value
-uns_CSFPDGF = CSF_PDGF_steady(uns_soln2) # gives [CSF, PDGF] at unstable fixed point from mF value
-nullsoln4 = uns_soln2 + uns_CSFPDGF # get [mF, M, CSF, PDGF] at unstable fixed point
+unstable_soln2 = nullcline_mF(unstable_soln) # gives [mF, M] at unstable fixed point from mF value
+uns_CSFPDGF = CSF_PDGF_steady(unstable_soln2) # gives [CSF, PDGF] at unstable fixed point from mF value
+nullsoln4 = unstable_soln2 + uns_CSFPDGF # get [mF, M, CSF, PDGF] at unstable fixed point
 
 hotfibr2 = nullcline_mF(hotfibr)
 hot_CSF_PDGF = CSF_PDGF_steady(hotfibr2)
 hotfibr4 = hotfibr2 + hot_CSF_PDGF
 
-plt.plot(uns_soln2[0], uns_soln2[1], marker = 'o', color = 'black')
+plt.plot(unstable_soln2[0], unstable_soln2[1], marker = 'o', color = 'black')
 plt.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
 
 print(nullsoln4)
 
-print(myofib_macro(nullsoln4, t), "rates at unstable fixed pt")
+print('Rates at unstable fixed point' ,myofib_macro(nullsoln4, t))
 
 
 def cold_fibr(): # finds the cold fibrosis point
@@ -196,7 +196,7 @@ def cold_fibr(): # finds the cold fibrosis point
     print("\n coldmF:", coldmF,"\n")
     return coldmF[0] #why do we use coldmF[0]?
 
-coldfibr2 = [cold_fibr(), 1]
+coldfibr2 = [cold_fibr(), 1] #1 becuase it is the lower part of y-axis?
 
 """" has same functionality as myofib_macro_ODE_reverse
 def rev_mF_M_rates(x,t):
@@ -220,19 +220,29 @@ def myofib_macro_ODE_reverse(x, t):    # outputs reverse derivative
 eps = 1e-6
 t_sep = np.linspace(0, 800, 1000)
 
-separatrix_left = odeint(myofib_macro_ODE_reverse, [uns_soln2[0]-eps, uns_soln2[1]+eps], t_sep)
+separatrix_left = odeint(myofib_macro_ODE_reverse, [unstable_soln2[0]-eps, unstable_soln2[1]+eps], t_sep)
 
 plt.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black', label = 'Separatrix')
 
-separatrix_right = odeint(myofib_macro_ODE_reverse, [uns_soln2[0]+eps, uns_soln2[1]-eps], t_sep)
+separatrix_right = odeint(myofib_macro_ODE_reverse, [unstable_soln2[0]+eps, unstable_soln2[1]-eps], t_sep)
 
 plt.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
-plt.annotate('unstable fixed point', uns_soln2)
+
+plt.annotate('unstable fixed point', unstable_soln2)
 plt.annotate('hot fibrosis fixed point', hotfibr2)
 plt.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
 plt.annotate('cold fibrosis fixed point', coldfibr2)
 
 plt.legend()
+
+
+"""
+
+
+Done until here
+
+
+"""
 
 # to plot the streamlines, we need to redefine functions to find steady CSF and PDGF levels that work for arrays
 
@@ -310,16 +320,13 @@ ax2.set_xscale('log')
 ax2.set_yscale('log')
 ax2.set_xlim(1, 10**6)
 ax2.set_ylim(1, 10**6)
-ax2.plot(uns_soln2[0], uns_soln2[1], marker = 'o', color = 'black')
+ax2.plot(unstable_soln2[0], unstable_soln2[1], marker = 'o', color = 'black')
 ax2.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
 ax2.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
 
 
 def theta(t): # heaviside step function
-    if t >= 0:
-        return 1
-    else:
-        return 0
+    return np.heaviside(t, 1)
 
 
 # define transient, repetitive and prolonged signals
@@ -367,7 +374,7 @@ x_prolonged = odeint(prolonged_derivatives, x_in, t)
 
 def time_taken(traj):
     end_point = [0, 0]
-    for fixed_pt in [hotfibr2, uns_soln2]:
+    for fixed_pt in [hotfibr2, unstable_soln2]:
         if (traj[-1][0] - fixed_pt[0])**2 + (traj[-1][1] - fixed_pt[1])**2 < (traj[-1][0] - end_point[0])**2 + (traj[-1][1] - end_point[1])**2:
             end_point = fixed_pt # find correct end point
             for i in range(len(traj)):
@@ -399,7 +406,7 @@ for ax2 in (ax21, ax22, ax23):
     ax2.set_yscale('log')
     ax2.set_xlim(1, 10**7)
     ax2.set_ylim(1, 10**7)
-    ax2.plot(uns_soln2[0], uns_soln2[1], marker = 'o', color = 'black')
+    ax2.plot(unstable_soln2[0], unstable_soln2[1], marker = 'o', color = 'black')
     ax2.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
     ax2.set_aspect('equal')
     ax2.set_xticks([10**i for i in range(8)])
@@ -459,7 +466,7 @@ for ax2 in (ax21, ax22, ax23):
     ax2.set_yscale('log')
     ax2.set_xlim(1, 10**7)
     ax2.set_ylim(1, 10**7)
-    ax2.plot(uns_soln2[0], uns_soln2[1], marker = 'o', color = 'black')
+    ax2.plot(unstable_soln2[0], unstable_soln2[1], marker = 'o', color = 'black')
     ax2.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
     ax2.set_aspect('equal')
     ax2.set_xticks([10**i for i in range(8)])
@@ -574,7 +581,7 @@ for ax2 in (ax21, ax22, ax23):
     ax2.set_yscale('log')
     ax2.set_xlim(1, 10**7)
     ax2.set_ylim(1, 10**7)
-    ax2.plot(uns_soln2[0], uns_soln2[1], marker = 'o', color = 'black')
+    ax2.plot(unstable_soln2[0], unstable_soln2[1], marker = 'o', color = 'black')
     ax2.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
     ax2.set_aspect('equal')
     ax2.set_xticks([10**i for i in range(8)])

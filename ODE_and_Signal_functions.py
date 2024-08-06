@@ -37,11 +37,16 @@ def myofib_macro_ODE_reverse(state, t):
 
 #Step function
 def theta(t):
-    return 1 if t >= 0 else 0
+    return np.heaviside(t, 1)
 
 #Signal functions
+#A generalized signal function
+def signal(t, start = 0, duration = 1, amplitude = 1):
+    return amplitude * (theta(t) - theta(t - (start + duration)))
+
+
 def transient(t):
-    return A_0*(theta(t) - theta(t - 2))
+    return signal(t, start = 0, duration = 2, amplitude = A_0)
 
 def repetetive(t):
     return transient(t) + transient(t - 4)
@@ -55,7 +60,13 @@ def sharp_signal(t):
 def one_signal(t, delta_t):
     return (A_0 * 4/ delta_t) * (theta(t) - theta(t - delta_t))
 
-#Block signals
+#Generalised block signal function
+def block(t, amplitudes, signal_starting_points, signal_durations):
+    total_signal = np.zeros_like(t)
+    for amplitude, start, duration in zip(amplitudes, signal_starting_points, signal_durations):
+        total_signal += signal(t, start=start, duration=duration, amplitude=amplitude)
+    return total_signal
+
 def blocks1(t):
     return 0.25 * one_signal(t, 8) + 0.35 * one_signal(t - 8, 2) + 0.4 * one_signal(t - 10,2 )
 
