@@ -43,13 +43,41 @@ def nullcline_M(sM_mF):
 def nulldiff(x):
     return nullcline_M(x)[1] - nullcline_mF(x)[1]
 
-# finds intersection of nullclines, bad estimate
+# finds intersection of nullclines, bad first estimate
 def intersectionNull_bad(mFM_space):
     mF_list = []
     for i in range(len(mFM_space) - 1):
         if nulldiff(mFM_space[i]) * nulldiff(mFM_space[i + 1]) < 0 or nulldiff(mFM_space[i]) == 0:
             mF_list.append(mFM_space[i])
     return mF_list
+
+
+def unstable_fixed_point_hotfibrosis_mF_M(mFM_space):
+    #use intersection_Null_bad to make a first rough approximation of the fixed points
+    fixed_point_mF_bad = intersectionNull_bad(mFM_space)
+    fixed_point_M_bad = [nullcline_M(i)[1] for i in fixed_point_mF_bad]
+
+    unstable_guess = fixed_point_mF_bad[0]
+    hotfibrosis_guess = fixed_point_mF_bad[1]
+
+    #Now use fsolve function to get a more precise solution and make it a floating number (instead of array)
+    unstable_fixed_point_mF = fsolve(nulldiff, unstable_guess)[0]
+
+    hotfibrosis_mF = fsolve(nulldiff, hotfibrosis_guess)[0]
+
+    #find all concentration at unstable fixed and hotfibrosis point
+    unstable_fixed_point_mF_M = nullcline_mF(unstable_fixed_point_mF)
+    
+    #unstable_fixed_point_CSF_PDGF = CSF_PDGF_steady(unstable_fixed_point_mF)
+    #unstable_fixed_point = unstable_fixed_point_mF_M + unstable_fixed_point_CSF_PDGF
+
+    hotfibrosis_mF_M = nullcline_mF(hotfibrosis_mF)
+    
+    #hotfibrosis_CSF_PDGF = CSF_PDGF_steady(hotfibrosis_mF)
+    #hotfibrosis = hotfibrosis_mF_M + hotfibrosis_CSF_PDGF
+
+    return (unstable_fixed_point_mF_M, hotfibrosis_mF_M)
+
 
 def cold_fibr():
     # Set M = 0 in eqn 4, use eqn 1. solve system for PDGF, get a cubic
