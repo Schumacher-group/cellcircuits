@@ -65,14 +65,15 @@ def unstable_fixed_point_hotfibrosis_mF_M(mFM_space):
 
     hotfibrosis_mF = fsolve(nulldiff, hotfibrosis_guess)[0]
 
-    #find all concentration at unstable fixed and hotfibrosis point
+    #find mF_M concentration at unstable fixed point
     unstable_fixed_point_mF_M = nullcline_mF(unstable_fixed_point_mF)
+
+    #find mF_M concentrations at hotfibrosis point
+    hotfibrosis_mF_M = nullcline_mF(hotfibrosis_mF)
+    
     
     #unstable_fixed_point_CSF_PDGF = CSF_PDGF_steady(unstable_fixed_point_mF)
     #unstable_fixed_point = unstable_fixed_point_mF_M + unstable_fixed_point_CSF_PDGF
-
-    hotfibrosis_mF_M = nullcline_mF(hotfibrosis_mF)
-    
     #hotfibrosis_CSF_PDGF = CSF_PDGF_steady(hotfibrosis_mF)
     #hotfibrosis = hotfibrosis_mF_M + hotfibrosis_CSF_PDGF
 
