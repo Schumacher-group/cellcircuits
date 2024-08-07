@@ -191,12 +191,12 @@ def cold_fibr(): # finds the cold fibrosis point
     print("\n Roots of PDGF:", coldPDGF,"\n")
     coldmF = []
     for coldroot in coldPDGF:
-        if np.isreal(coldroot):
+        if np.isreal(coldroot) and coldroot >= 0:
             coldmF.append(K * ((lambda1-mu1)/(lambda1)-(mu1*k1)/(lambda1*np.real(coldroot)))) # finds mF value given PDGF value
     print("\n coldmF:", coldmF,"\n")
     return coldmF[0] #why do we use coldmF[0]?
 
-coldfibr2 = [cold_fibr(), 1] #1 becuase it is the lower part of y-axis?
+coldfibr2 = [cold_fibr(), 1] #1 becauase it is the lower part of y-axis?
 
 """" has same functionality as myofib_macro_ODE_reverse
 def rev_mF_M_rates(x,t):
@@ -235,7 +235,8 @@ plt.annotate('cold fibrosis fixed point', coldfibr2)
 
 plt.legend()
 
-
+plt.show()
+exit()
 """
 
 
