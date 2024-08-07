@@ -194,9 +194,10 @@ def cold_fibr(): # finds the cold fibrosis point
         if np.isreal(coldroot) and coldroot >= 0:
             coldmF.append(K * ((lambda1-mu1)/(lambda1)-(mu1*k1)/(lambda1*np.real(coldroot)))) # finds mF value given PDGF value
     print("\n coldmF:", coldmF,"\n")
-    return coldmF[0] #why do we use coldmF[0]?
+    return coldmF[0], coldmF[1] #why do we use coldmF[0]?
 
-coldfibr2 = [cold_fibr(), 1] #1 becauase it is the lower part of y-axis?
+coldfibr2 = [cold_fibr()[0], 1] #1 becauase it is the lower part of y-axis?
+fixed_point_end_of_separatrix = [cold_fibr()[1], 1]
 
 """" has same functionality as myofib_macro_ODE_reverse
 def rev_mF_M_rates(x,t):
@@ -228,15 +229,17 @@ separatrix_right = odeint(myofib_macro_ODE_reverse, [unstable_soln2[0]+eps, unst
 
 plt.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
 
+
 plt.annotate('unstable fixed point', unstable_soln2)
 plt.annotate('hot fibrosis fixed point', hotfibr2)
 plt.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
 plt.annotate('cold fibrosis fixed point', coldfibr2)
+plt.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
+
 
 plt.legend()
 
-plt.show()
-exit()
+
 """
 
 
@@ -324,7 +327,10 @@ ax2.set_ylim(1, 10**6)
 ax2.plot(unstable_soln2[0], unstable_soln2[1], marker = 'o', color = 'black')
 ax2.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
 ax2.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
+ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
+
+plt.show()
 
 def theta(t): # heaviside step function
     return np.heaviside(t, 1)
