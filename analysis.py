@@ -1,6 +1,8 @@
 from parameters import *
 import numpy as np
 from scipy.optimize import fsolve
+from scipy.integrate import odeint
+from ODE_and_Signal_functions import myofib_macro_ODE_reverse
 
 #find steady state for CSF and PDGF given mF and M levels using the fast timescale 
 def CSF_PDGF_steady(x):
@@ -39,6 +41,15 @@ def nullcline_M(sM_mF):
     sM_CSF = (k2 * mu2) / (lambda2 - mu2)
     M = ((k2 + sM_CSF) / (alpha1 * sM_CSF)) * (beta1 * sM_mF - gamma * sM_CSF)
     return [sM_mF, M]
+
+
+def calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix):
+    eps = 1e-6
+    separatrix_left = odeint(myofib_macro_ODE_reverse, [unstable_fixed_point_mF_M[0] - eps,
+                                                        unstable_fixed_point_mF_M[1] + eps], t_separatrix)
+    separatrix_right = odeint(myofib_macro_ODE_reverse, [unstable_fixed_point_mF_M[0] + eps,
+                                                         unstable_fixed_point_mF_M[1] - eps], t_separatrix)
+    return separatrix_left, separatrix_right
 
 def nulldiff(x):
     return nullcline_M(x)[1] - nullcline_mF(x)[1]

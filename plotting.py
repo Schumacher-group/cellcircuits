@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 from parameters import *
-from analysis import nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, coldfibr2
-from ODE_and_Signal_functions import myofib_macro_ODE_reverse
-from scipy.integrate import odeint
+from analysis import nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,coldfibr2
+
 
 
 def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth):
@@ -35,13 +34,10 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
     plt.plot(hotfibrosis_mF_M[0], hotfibrosis_mF_M[1], marker = 'o', color = 'black')
     plt.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
 
-    eps = 1e-6
-    t_separatrix = np.linspace(0, 800, 1000) #time array for separatrix
+    
+    t_separatrix = np.linspace(0, 800, 1000)
 
-    separatrix_left = odeint(myofib_macro_ODE_reverse, [unstable_fixed_point_mF_M[0] - eps, 
-                                                        unstable_fixed_point_mF_M[1] + eps], t_separatrix)
-    separatrix_right = odeint(myofib_macro_ODE_reverse, [unstable_fixed_point_mF_M[0] + eps,
-                                                         unstable_fixed_point_mF_M[1] - eps], t_separatrix)
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
     plt.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black', label = 'Separatrix')
     plt.plot(separatrix_right[:, 0],separatrix_right[:, 1], 'black')
 
