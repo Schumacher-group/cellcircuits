@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from parameters import *
-from analysis import nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,coldfibr2
+from analysis import (
+    nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
+    cold_fibr, mF_M_rates_array)
 
 
 
@@ -24,15 +26,17 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
 
     unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
-    coldfibrosis_mF_M = coldfibr2
+    coldfibrosis_mF_M = [cold_fibr[0], 1]
+    fixed_point_end_of_separatrix = [cold_fibr[1], 1]
 
     plt.annotate('unstable fixed point', unstable_fixed_point_mF_M)
     plt.annotate('hot fibrosis fixed point', hotfibrosis_mF_M)
-    plt.annotate('cold fibrosis fixed point', coldfibr2)
+    plt.annotate('cold fibrosis fixed point', coldfibrosis_mF_M)
 
     plt.plot(unstable_fixed_point_mF_M[0], unstable_fixed_point_mF_M[1], marker = 'o', color = 'black')
     plt.plot(hotfibrosis_mF_M[0], hotfibrosis_mF_M[1], marker = 'o', color = 'black')
-    plt.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
+    plt.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker = 'o', color = "black")
+    plt.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
     
     t_separatrix = np.linspace(0, 800, 1000)
@@ -43,4 +47,51 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
 
     plt.legend()
     plt.show()
+
+
+def plot_streamlines(mFM_space):
+    fig = plt.figure()
+    mF_mesh = np.linspace(0, 7, 30)
+    M_mesh = np.linspace(0, 7, 30)
+    mF_stream, M_stream = np.meshgrid(mF_mesh, M_mesh)
+
+    ax=fig.add_subplot(111, label="1")
+    ax2=fig.add_subplot(111, label="2", frame_on=False)
+
+    mF_rate, M_rate = mF_M_rates_array(mF_stream, M_stream)
+
+    #scale the rates to appropriate size
+    mF_rate_scaled = mF_rate/(10**mF_stream)
+    M_rate_scaled = M_rate/(10**M_stream)
+
+    strm = ax.streamplot(mF_stream, M_stream, mF_rate_scaled, M_rate_scaled,
+                     color = (np.sqrt((mF_rate_scaled)**2 + (M_rate_scaled)**2)) , cmap = 'autumn')
+
+    unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
+
+    t_separatrix = np.linspace(0, 800, 1000)
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
+
+    coldfibrosis_mF_M = [cold_fibr[0], 1]
+    fixed_point_end_of_separatrix = [cold_fibr[1], 1]
+
+    ax.set_xlim(0, 7)
+    ax.set_ylim(0,7)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax2.set_xlabel('myofibroblasts')
+    ax2.set_ylabel('macrophages')
+
+
+
+    ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
+    ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.set_xlim(1, 10**7)
+    ax2.set_ylim(1, 10**7)
+    ax2.plot(unstable_fixed_point_mF_M[0], unstable_fixed_point_mF_M[1], marker = 'o', color = 'black')
+    ax2.plot(hotfibrosis_mF_M[0], hotfibrosis_mF_M[1], marker = 'o', color = 'black')
+    ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker = 'o', color = "black")
+    ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
