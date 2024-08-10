@@ -6,31 +6,69 @@ from ODE_and_Signal_functions import myofib_macro_ODE_reverse
 
 #find steady state for CSF and PDGF given mF and M levels using the fast timescale 
 def CSF_PDGF_steady(x):
-    mF, M = x
+    mF = x[0]
+    M = x[1]
     
-    # equation for steady CSF is   0 = -gamma*(CSF)**2 + CSF*(beta1*mF-alpha1*M-k2*gamma) + beta1*k2*mF
-    # equation for steady PDGF is  0 = -gamma*(PDGF)**2 + PDGF * (beta2*M + beta3*mF -alpha2 * mF- gamma * k1) +k1*(beta2*M+beta3*mF)
-
-
-    c_CSF = np.array([-1 * gamma, beta1 * mF - alpha1 * M - k2 * gamma, beta1 * k2 * mF])
-    c_PDGF = np.array([-1 * gamma, beta2 * M + beta3 * mF -alpha2 * mF - gamma * k1, k1 * (beta2 * M + beta3 * mF)])
+    # equation for steady CSF is -gamma*(CSF)**2 + CSF*(beta1*mF-alpha1*M-k2*gamma) + beta1*k2*mF
+    # equation for steady PDGF is  -gamma*(PDGF)**2 + PDGF * (beta2*M + beta3*mF -alpha2 * mF- gamma * k1) +k1*(beta2*M+beta3*mF)
+    
+    c_CSF = np.array([-1*gamma, beta1*mF-alpha1*M-k2*gamma, beta1*k2*mF])
+    c_PDGF = np.array([-1*gamma, beta2*M + beta3*mF -alpha2 * mF - gamma * k1, k1*(beta2*M+beta3*mF)])
     CSF_roots = np.roots(c_CSF)
     PDGF_roots = np.roots(c_PDGF)
+    root_pairs = []
+    for CSF_root in CSF_roots:
+        for PDGF_root in PDGF_roots:
+                if np.isreal(CSF_root) and np.isreal(PDGF_root) and PDGF_root >= 0 and CSF_root >= 0:
+                    root_pairs.append(CSF_root)
+                    root_pairs.append(PDGF_root)
+    return(root_pairs)
 
-    root_pairs = [(CSF_root, PDGF_root) for CSF_root in CSF_roots for PDGF_root in PDGF_roots
-                  if np.isreal(CSF_root) and np.isreal(PDGF_root) and CSF_root >= 0 and PDGF_root >= 0]
+def mF_M_rates(x, t):
+    mF = x[0]
+    M = x[1]
+    CSF, PDGF = CSF_PDGF_steady([mF, M])
+    d_mF_dt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
+    d_M_dt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
+    return [d_mF_dt, d_M_dt]
 
-    return root_pairs
 
-def mF_M_rates(exp_mF, exp_M, t):
+def CSF_PDGF_steady_array(x): # finds steady CSF and PDGF levels for given mF and M levels
+    mF = x[0]
+    M = x[1]
+    # equation for steady CSF is -gamma*(CSF)**2 + CSF*(beta1*mF-alpha1*M-k2*gamma) + beta1*k2*mF
+    # equation for steady PDGF is  -gamma*(PDGF)**2 + PDGF * (beta2*M + beta3*mF -alpha2 * mF- gamma * k1) +k1*(beta2*M+beta3*mF)
+
+    c_CSF_array = np.array([-1*gamma*np.ones(np.shape(mF)), beta1*mF-alpha1*M-k2*gamma, beta1*k2*mF])
+    c_PDGF_array = np.array([-1*gamma*np.ones(np.shape(mF)), beta2*M + beta3*mF -alpha2 * mF - gamma * k1, k1*(beta2*M+beta3*mF)])
+    # define empty arrays fo CSF and PDGF
+    CSF_array = np.zeros(np.shape(mF)) #is an array of the form [[][]]
+    PDGF_array = np.zeros(np.shape(mF))
+    for i in range(0, np.shape(mF)[0]):
+        for j in range(0, np.shape(mF)[1]):
+            # get 1d arrays of CSF and PDGF coefficients for each grid value
+            c_CSF = np.array([c_CSF_array[0][i][j], c_CSF_array[1][i][j], c_CSF_array[2][i][j]])
+            c_PDGF = np.array([c_PDGF_array[0][i][j], c_PDGF_array[1][i][j], c_PDGF_array[2][i][j]])
+            CSF_roots = np.roots(c_CSF)
+            PDGF_roots = np.roots(c_PDGF)
+            for CSF_root in CSF_roots:
+                for PDGF_root in PDGF_roots:
+                    if np.isreal(CSF_root) and np.isreal(PDGF_root) and PDGF_root >= 0 and CSF_root >= 0:
+                        CSF_array[i][j] = CSF_root
+                        PDGF_array[i][j] = PDGF_root
+    return [CSF_array, PDGF_array] 
+
+
+def mF_M_rates_array(exp_mF, exp_M, t):
     # we need dmFdt and dMdt to be plotted at different values as streamplot can only take in linearly spaced values,
     # so we take in the exponents of mF and M values to get logarithmically spaced
     mF = 10**exp_mF
     M = 10**exp_M
-    CSF, PDGF = CSF_PDGF_steady([mF, M])
-    d_mF_dt = mF * (lambda1 * (PDGF / (k1 + PDGF)) * (1 - mF / K) - mu1)
-    d_M_dt = M * (lambda2 * (CSF / (k2 + CSF)) - mu2)
+    CSF, PDGF = CSF_PDGF_steady_array([mF, M])
+    d_mF_dt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
+    d_M_dt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
     return d_mF_dt, d_M_dt
+
 
 def nullcline_mF(mF):
     smF_PDGF = (mu1 * k1 *K) / (lambda1 * K - mu1 *K - mF *lambda1)
@@ -106,7 +144,6 @@ def cold_fibr():
             coldmF.append(K * ((lambda1-mu1)/(lambda1)-(mu1*k1)/(lambda1*np.real(coldroot)))) # finds mF value given PDGF value
     return coldmF[0]
 
-coldfibr2 = [cold_fibr(), 1]
 
 
 def time_taken(traj, t, hotfibr2, uns_soln2):
