@@ -43,6 +43,7 @@ x0 = [6*10**3, 7*10**3] # initial point for trajectory
 t = np.linspace(0, 80, 1000)
 
 
+#Returns in general many root pairs (CSF_1, PDGF_1, CSF_2, PDGF_2, ...) and only in this case 1 pair!!!
 def CSF_PDGF_steady(x): # finds steady CSF and PDGF levels for given mF and M levels
     mF = x[0]
     M = x[1]
@@ -213,7 +214,7 @@ def myofib_macro_ODE_reverse(x, t):    # outputs reverse derivative
     # variables
     mF = x[0]
     M = x[1]
-    if 0 <= mF <= 10**6 and 0 <= M <= 10**7:
+    if 0 <= mF <= 10**7 and 0 <= M <= 10**7:
         return [-i for i in mF_M_rates(x, t)]
     else:
         return [0, 0]
@@ -239,7 +240,6 @@ plt.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], mar
 
 plt.legend()
 
-
 """
 
 
@@ -259,7 +259,7 @@ def CSF_PDGF_steady_array(x): # finds steady CSF and PDGF levels for given mF an
     c_CSF_array = np.array([-1*gamma*np.ones(np.shape(mF)), beta1*mF-alpha1*M-k2*gamma, beta1*k2*mF])
     c_PDGF_array = np.array([-1*gamma*np.ones(np.shape(mF)), beta2*M + beta3*mF -alpha2 * mF - gamma * k1, k1*(beta2*M+beta3*mF)])
     # define empty arrays fo CSF and PDGF
-    CSF_array = np.zeros(np.shape(mF))
+    CSF_array = np.zeros(np.shape(mF)) #is an array of the form [[][]]
     PDGF_array = np.zeros(np.shape(mF))
     for i in range(0, np.shape(mF)[0]):
         for j in range(0, np.shape(mF)[1]):
@@ -273,7 +273,7 @@ def CSF_PDGF_steady_array(x): # finds steady CSF and PDGF levels for given mF an
                     if np.isreal(CSF_root) and np.isreal(PDGF_root) and PDGF_root >= 0 and CSF_root >= 0:
                         CSF_array[i][j] = CSF_root
                         PDGF_array[i][j] = PDGF_root
-    return [CSF_array, PDGF_array]
+    return [CSF_array, PDGF_array] 
 
 
 
@@ -291,8 +291,8 @@ def mF_M_rates_array(exp_mF, exp_M, t):
 
 fig = plt.figure()
 
-mF_mesh = np.linspace(0, 6, 25)
-M_mesh = np.linspace(0, 6, 25)
+mF_mesh = np.linspace(0, 7, 30)
+M_mesh = np.linspace(0, 7, 30)
 mF_stream, M_stream = np.meshgrid(mF_mesh, M_mesh) # returns
 
 ax=fig.add_subplot(111, label="1")
@@ -309,8 +309,8 @@ strm = ax.streamplot(mF_stream, M_stream, mF_rate_scaled, M_rate_scaled,
                      color = (np.sqrt((mF_rate_scaled)**2 + (M_rate_scaled)**2)) , cmap = 'autumn')
 
 
-ax.set_xlim(0, 6)
-ax.set_ylim(0,6)
+ax.set_xlim(0, 7)
+ax.set_ylim(0,7)
 ax.set_xticks([])
 ax.set_yticks([])
 ax2.set_xlabel('myofibroblasts')
@@ -322,8 +322,8 @@ ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
 ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
 ax2.set_xscale('log')
 ax2.set_yscale('log')
-ax2.set_xlim(1, 10**6)
-ax2.set_ylim(1, 10**6)
+ax2.set_xlim(1, 10**7)
+ax2.set_ylim(1, 10**7)
 ax2.plot(unstable_soln2[0], unstable_soln2[1], marker = 'o', color = 'black')
 ax2.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
 ax2.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
@@ -331,6 +331,7 @@ ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], mar
 
 
 plt.show()
+exit()
 
 def theta(t): # heaviside step function
     return np.heaviside(t, 1)
