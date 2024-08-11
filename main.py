@@ -240,13 +240,7 @@ plt.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], mar
 
 plt.legend()
 
-"""
 
-
-Done until here
-
-
-"""
 
 # to plot the streamlines, we need to redefine functions to find steady CSF and PDGF levels that work for arrays
 
@@ -330,8 +324,14 @@ ax2.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
 ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
 
-plt.show()
-exit()
+
+"""
+
+
+Done until here
+
+
+"""
 
 def theta(t): # heaviside step function
     return np.heaviside(t, 1)
@@ -386,6 +386,7 @@ def time_taken(traj):
         if (traj[-1][0] - fixed_pt[0])**2 + (traj[-1][1] - fixed_pt[1])**2 < (traj[-1][0] - end_point[0])**2 + (traj[-1][1] - end_point[1])**2:
             end_point = fixed_pt # find correct end point
             for i in range(len(traj)):
+                #end point length included to take scale into account
                 if (traj[i][0] - end_point[0])**2 + (traj[i][1] - end_point[1])**2 < 1e-3 *((end_point[0])**2 + (end_point[1])**2) :
                     return t[i] # finds time at which trajectory reaches end point if end point is not 0
     for i in range(len(traj)):
@@ -396,9 +397,9 @@ def time_taken(traj):
 def time_taken_rd(traj): # so that time_taken can be rounded and included in figures
     return round(time_taken(traj), 2)
 
-print(time_taken(x_repetitive))
-print(time_taken(x_prolonged))
-print(time_taken(x_transient))
+print('Repetitive signal:',time_taken(x_repetitive))
+print('Prolonged signal:',time_taken(x_prolonged))
+print('Transient signal',time_taken(x_transient))
 
 
 # plotting transient, repetitive and prolonged signals
