@@ -62,6 +62,14 @@ def one_signal(t, delta_t):
     return (A_0 * 4/ delta_t) * (theta(t) - theta(t - delta_t))
 
 
+def sharp_signal(t, A_0, delta_t):
+    return (A_0/delta_t)*(theta(t) - theta(t - delta_t))
+
+def inter_signal(t):
+    return one_signal(t, 8)
+
+def slow_signal(t):
+    return one_signal(t, 20)
 
 #Generalised block signal function
 def block(t, amplitudes, signal_starting_points, signal_durations):
@@ -107,6 +115,19 @@ def sharp_derivatives(state, t):
     derivatives = mF_M_rates(state, t)
     derivatives[1] += sharp_signal(t)
     return derivatives
+
+def inter_derivatives(x, t):
+    regular_derivatives = mF_M_rates(x, t)
+    new_derivatives = regular_derivatives
+    new_derivatives[1] = new_derivatives[1] + inter_signal(t)
+    return new_derivatives
+
+def slow_derivatives(x, t):
+    regular_derivatives = mF_M_rates(x, t)
+    new_derivatives = regular_derivatives
+    new_derivatives[1] = new_derivatives[1] + slow_signal(t)
+    return new_derivatives
+
 
 #Block derivatives
 def blocks1_derivatives(state, t):
