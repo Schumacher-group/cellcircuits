@@ -1,8 +1,9 @@
 import matplotlib.pyplot as plt
+from scipy.integrate import odeint
 from parameters import *
 from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
-    cold_fibr, mF_M_rates_array)
+    cold_fibr, mF_M_rates_array, time_taken_rd)
 
 
 
@@ -95,3 +96,47 @@ def plot_streamlines(mFM_space):
     ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker = 'o', color = "black")
     ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
+#Plot the trajectory for one signal function
+def plot_signals_and_trajectories(mFM_space, signal, signal_derivative):
+    coldfibrosis_mF_M = [cold_fibr[0], 1]
+    unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
+
+    t_separatrix = np.linspace(0, 800, 1000)
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
+
+    fig, (ax1, ax2) = plt.subplots(1, 1)
+    fig.subplots_adjust(hspace= 0.5)
+
+    ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
+    ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.set_xlim(1, 10**7)
+    ax2.set_ylim(1, 10**7)
+    ax2.plot(unstable_fixed_point_mF_M[0], unstable_fixed_point_mF_M[1], marker = 'o', color = 'black')
+    ax2.plot(hotfibrosis_mF_M[0], hotfibrosis_mF_M[1], marker = 'o', color = 'black')
+    ax2.set_aspect('equal')
+    ax2.set_xticks([10**i for i in range(8)])
+    ax2.set_xlabel('myofibroblasts')
+    ax2.set_ylabel('macrophages')
+    ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker='o', color="black")
+
+    # setting up injury plots
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+    ax1.set_xlim(0,10)
+    ax1.set_ylim(0,10)
+    ax1.set_aspect('equal')
+    ax1.set_xlabel('time (days)')
+    ax1.set_ylabel('I(t)')
+    ax1.set_xticks([0, 2, 4, 6, 8])
+    ax1.set_yticks([0, 9], [0, "A0".translate(SUB)])
+
+    x_initial = [1, 1] #mF, M
+    t = np.linspace(0, 80, 1000)
+    x = odeint(signal_derivative, x_initial, t)
+
+    #ax1 plot need to be adjusted
+
+    ax2.plot(x[:,0], x[:,1], 'red')
+    ax2.set_title("time taken: " + str(time_taken_rd(x)) + " days")
