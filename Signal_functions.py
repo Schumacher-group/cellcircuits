@@ -18,6 +18,7 @@ class Signal:
     def basic_signal(self, start, duration, amplitude, t):
         return amplitude * (self.theta(t) - self.theta(t - (start + duration)))
     
+    #final signal made up as a combination of the basic_signal
     def signal_function(self,t):
         total_signal = np.zeros_like(t)
         for start, duration, amplitude in zip(self.start_points, self.durations, self.amplitudes):
@@ -79,10 +80,12 @@ def blocks3(t):
 
 
 #Generalized signal/block derivative function, added signal increaces macrophage rate
-def adjusted_derivatives_with_signal(state, t, signal_function):
-    derivatives = mF_M_rates(state, t)
-    derivatives[1] += signal_function(t)
-    return derivatives
+def adjusted_derivatives_with_signal(signal_function):
+    def derivative_function(state, t):
+        derivatives = mF_M_rates(state, t)
+        derivatives[1] += signal_function(t)
+        return derivatives
+    return derivative_function
 
 
 
