@@ -18,13 +18,6 @@ def myofib_macro(state, t): # outputs list of gradients
 
 
 
-#outputs reverse derivative, state encompasses mF, M concentrations 
-def myofib_macro_ODE_reverse(state, t):
-    derivatives = myofib_macro(state, t)
-    
-    #checking if concentrations are in a reasonable range
-    return [-d for d in derivatives] if all(0 <= x <= 10**7 for x in state) else [0, 0]
-
 
 #find steady state for CSF and PDGF given mF and M levels using the fast timescale 
 def CSF_PDGF_steady(x):
@@ -46,13 +39,18 @@ def CSF_PDGF_steady(x):
                     root_pairs.append(PDGF_root)
     return(root_pairs)
 
-def mF_M_rates(x, t):
-    mF = x[0]
-    M = x[1]
+def mF_M_rates(state, t):
+    mF, M = state
     CSF, PDGF = CSF_PDGF_steady([mF, M])
     d_mF_dt = mF * (lambda1 * ((PDGF)/(k1+PDGF))*(1-mF/K)-mu1)
     d_M_dt = M*(lambda2*(CSF/(k2 + CSF))- mu2)
     return [d_mF_dt, d_M_dt]
+
+#outputs reverse derivative, state encompasses mF, M concentrations 
+def myofib_macro_ODE_reverse(state, t):
+    
+    #checking if concentrations are in a reasonable range
+    return [-d for d in mF_M_rates(state, t)] if all(0 <= x <= 10**7 for x in state) else [0, 0]
 
 def rev_mf_M_rates(state, t):
     derivatives = mF_M_rates(state, t)
