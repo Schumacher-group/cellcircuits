@@ -2,7 +2,7 @@ import numpy as np
 from scipy.integrate import odeint
 from scipy.optimize import fsolve
 from analysis import *
-from ODE_and_Signal_functions import *
+from Signal_functions import *
 from plotting import *
 from parameters import *
 
@@ -10,6 +10,7 @@ from parameters import *
 def main():
     #time vector 
     t = np.linspace(0, 80, 1000)
+    t_separatrix = np.linspace(0, 800, 1000)
 
     #initial starting points
     x0 = [6*10**3, 7*10**3]
@@ -27,5 +28,15 @@ def main():
 
 
     # straight lines to replace/ignore the sharp increase near the poles
-    xsmooth1 = [10**5.7, 10**5.85]
-    ysmooth1 = [nullcline_mF(pt)[1] for pt in xsmooth1]
+    xsmooth = [10**5.7, 10**5.85]
+    ysmooth = [nullcline_mF(pt)[1] for pt in xsmooth]
+
+    plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix = t)
+
+    plot_streamlines(mFM_space, t, t_separatrix)
+
+    plt.show()
+
+
+if __name__ == '__main__':
+    main()
