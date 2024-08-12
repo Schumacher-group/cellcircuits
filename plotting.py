@@ -45,7 +45,6 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
     plt.plot(separatrix_right[:, 0],separatrix_right[:, 1], 'black')
 
     plt.legend()
-    plt.show()
 
 
 def plot_streamlines(mFM_space, t, t_separatrix):
@@ -95,7 +94,6 @@ def plot_streamlines(mFM_space, t, t_separatrix):
     ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker = 'o', color = "black")
     ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
-    plt.show()
 
 #Plot the trajectory for one signal function
 def plot_signals_and_trajectories(mFM_space, signal, signal_derivative, t, t_separatrix):
