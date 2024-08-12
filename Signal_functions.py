@@ -3,14 +3,18 @@ from parameters import *
 from analysis import mF_M_rates
 
 class Signal:
-    def __init__(self, name, start_points = 0, durations = 1, amplitudes = 1):
+    def __init__(self, name: str, start_points = 0, durations = 1, amplitudes = 1):
+        # convert all arrays to numpy arrays
         self.name = name
-        self.start_points = start_points
-        self.durations = durations
-        self.amplitudes = amplitudes
+        self.start_points = np.array(start_points)
+        self.durations = np.array(durations)
+        self.amplitudes = np.array(amplitudes)
 
     def __repr__(self):
         return f'{self.name}'
+    
+    def endpoint_of_signal(self):
+        return np.max(self.start_points + self.durations)
     
     def theta(self, t):
         return np.heaviside(t, 1)
