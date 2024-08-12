@@ -48,7 +48,7 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
     plt.show()
 
 
-def plot_streamlines(mFM_space, t):
+def plot_streamlines(mFM_space, t, t_separatrix):
     fig = plt.figure()
     mF_mesh = np.linspace(0, 7, 30)
     M_mesh = np.linspace(0, 7, 30)
@@ -69,7 +69,8 @@ def plot_streamlines(mFM_space, t):
     unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
     
-    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t)
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
+    
 
     coldfibrosis_mF_M = [cold_fibr()[0], 1]
     fixed_point_end_of_separatrix = [cold_fibr()[1], 1]
@@ -94,12 +95,14 @@ def plot_streamlines(mFM_space, t):
     ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker = 'o', color = "black")
     ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
+    plt.show()
+
 #Plot the trajectory for one signal function
-def plot_signals_and_trajectories(mFM_space, signal, signal_derivative, t):
+def plot_signals_and_trajectories(mFM_space, signal, signal_derivative, t, t_separatrix):
     coldfibrosis_mF_M = [cold_fibr()[0], 1]
     unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
-    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t)
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
 
     fig, (ax1, ax2) = plt.subplots(1, 1)
     fig.subplots_adjust(hspace= 0.5)
