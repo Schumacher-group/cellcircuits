@@ -102,7 +102,7 @@ def plot_signals_and_trajectories(mFM_space, signal, signal_derivative, t, t_sep
 
     separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
 
-    fig, (ax1, ax2) = plt.subplots(1, 1)
+    fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.subplots_adjust(hspace= 0.5)
 
     ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
