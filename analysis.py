@@ -163,9 +163,11 @@ def cold_fibr():
     # rearranged from eqns in transparent methods
     coldPDGF = np.roots(PDGF_coeff)
     coldmF = []
+    print("\n Roots of PDGF:", coldPDGF,"\n")
     for coldroot in coldPDGF:
-        if np.isreal(coldroot):
-            coldmF.append(K * ((lambda1-mu1)/(lambda1)-(mu1*k1)/(lambda1*np.real(coldroot)))) # finds mF value given PDGF value
+        if np.isreal(coldroot) and coldroot >= 0:
+            coldmF.append(K * ((lambda1 - mu1) / (lambda1) - (mu1 * k1) / (lambda1 * np.real(coldroot)))) # finds mF value given PDGF value
+    print("\n coldmF:", coldmF,"\n")
     return coldmF
 
 
