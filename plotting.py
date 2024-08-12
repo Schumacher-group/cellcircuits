@@ -137,4 +137,4 @@ def plot_signals_and_trajectories(mFM_space, signal, signal_derivative, t, t_sep
     #ax1 plot need to be adjusted
 
     ax2.plot(x[:,0], x[:,1], 'red')
-    ax2.set_title("time taken: " + str(time_taken_rd(x)) + " days")
+    ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
