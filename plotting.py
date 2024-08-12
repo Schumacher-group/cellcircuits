@@ -4,6 +4,7 @@ from parameters import *
 from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
     cold_fibr, mF_M_rates_array, time_taken_rd)
+from Signal_functions import Signal, adjusted_derivatives_with_signal
 
 
 
@@ -96,7 +97,7 @@ def plot_streamlines(mFM_space, t, t_separatrix):
 
 
 #Plot the trajectory for one signal function
-def plot_signals_and_trajectories(mFM_space, signal, signal_derivative, t, t_separatrix):
+def plot_signals_and_trajectories(mFM_space, signal_function, signal_derivative, t, t_separatrix):
     coldfibrosis_mF_M = [cold_fibr()[0], 1]
     unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
@@ -127,14 +128,65 @@ def plot_signals_and_trajectories(mFM_space, signal, signal_derivative, t, t_sep
     ax1.set_aspect('equal')
     ax1.set_xlabel('time (days)')
     ax1.set_ylabel('I(t)')
-    ax1.set_xticks([0, 2, 4, 6, 8])
-    ax1.set_yticks([0, 9], [0, "A0".translate(SUB)])
 
     x_initial = [1, 1] #mF, M
     
     x = odeint(signal_derivative, x_initial, t)
 
     #ax1 plot need to be adjusted
+    ax1.plot()
 
     ax2.plot(x[:,0], x[:,1], 'red')
+    ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
+
+
+def plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal: Signal):
+    signal_function = signal.signal_function
+    signal_derivative = adjusted_derivatives_with_signal(signal_function)
+    endpoint_of_signal = signal.endpoint_of_signal()
+    
+    coldfibrosis_mF_M = [cold_fibr()[0], 1]
+    unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
+
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.subplots_adjust(hspace= 0.5)
+
+    ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
+    ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.set_xlim(1, 10**7)
+    ax2.set_ylim(1, 10**7)
+    ax2.plot(unstable_fixed_point_mF_M[0], unstable_fixed_point_mF_M[1], marker = 'o', color = 'black')
+    ax2.plot(hotfibrosis_mF_M[0], hotfibrosis_mF_M[1], marker = 'o', color = 'black')
+    ax2.set_aspect('equal')
+    ax2.set_xticks([10**i for i in range(8)])
+    ax2.set_xlabel('myofibroblasts')
+    ax2.set_ylabel('macrophages')
+    ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker='o', color="black")
+
+    # setting up injury plots
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+    ax1.set_xlim(0,10)
+    ax1.set_ylim(0,10)
+    ax1.set_aspect('equal')
+    ax1.set_xlabel('time (days)')
+    ax1.set_ylabel('I(t)')
+    ax1.set_xticks(signal.start_points, signal.start_points + signal.durations)
+    ax1.set_yticks([1],['A0'.translate(SUB)])
+
+    x_initial = [1, 1] #mF, M
+    
+    x = odeint(signal_derivative, x_initial, t)
+
+    #ax1 plot need to be adjusted
+    t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
+    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red')
+    ax1.set_title(signal.name)
+
+    ax2.plot(x[:,0], x[:,1], 'red')
+    ax2.yaxis.set_label_position("right")
     ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
