@@ -168,7 +168,7 @@ def cold_fibr():
     for coldroot in coldPDGF:
         if np.isreal(coldroot):
             coldmF.append(K * ((lambda1-mu1)/(lambda1)-(mu1*k1)/(lambda1*np.real(coldroot)))) # finds mF value given PDGF value
-    return coldmF[0]
+    return coldmF
 
 
 
