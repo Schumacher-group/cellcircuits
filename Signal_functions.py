@@ -2,6 +2,17 @@ import numpy as np
 from parameters import *
 from analysis import mF_M_rates
 
+class Signal:
+    def __init__(self, name, start = 0, duration = 1, amplitude = 1):
+        self.name = name
+        self.start = start
+        self.duration = duration
+        self.amplitude = amplitude
+
+    def __repr__(self):
+        return f'{self.name}'
+    
+    
 
 #Step function
 def theta(t):
