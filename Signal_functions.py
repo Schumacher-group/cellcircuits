@@ -3,16 +3,27 @@ from parameters import *
 from analysis import mF_M_rates
 
 class Signal:
-    def __init__(self, name, start = 0, duration = 1, amplitude = 1):
+    def __init__(self, name, start_points = 0, durations = 1, amplitudes = 1):
         self.name = name
-        self.start = start
-        self.duration = duration
-        self.amplitude = amplitude
+        self.start_points = start_points
+        self.durations = durations
+        self.amplitudes = amplitudes
 
     def __repr__(self):
         return f'{self.name}'
     
+    def theta(self, t):
+        return np.heaviside(t, 1)
+
+    def basic_signal(self, start, duration, amplitude, t):
+        return amplitude * (self.theta(t) - self.theta(t - (start + duration)))
     
+    def signal_function(self,t):
+        total_signal = np.zeros_like(t)
+        for start, duration, amplitude in zip(self.start_points, self.durations, self.amplitudes):
+            total_signal += self.basic_signal(start, duration, amplitude, t)
+        return total_signal
+
 
 #Step function
 def theta(t):
@@ -68,9 +79,9 @@ def blocks3(t):
 
 
 #Generalized signal/block derivative function, added signal increaces macrophage rate
-def adjusted_derivatives_with_signal(state, t, signal_func):
+def adjusted_derivatives_with_signal(state, t, signal_function):
     derivatives = mF_M_rates(state, t)
-    derivatives[1] += signal_func(t)
+    derivatives[1] += signal_function(t)
     return derivatives
 
 
