@@ -1,38 +1,6 @@
 import numpy as np
 from parameters import *
-from analysis import CSF_PDGF_steady
-
-#Outpust list of gradients, state encompasses concentrations for mF, M, CSF and PDGF as cells per ml
-def myofib_macro(state, t): # outputs list of gradients
-    
-    mF, M, CSF, PDGF = state
-
-    d_mF_dt = mF * (lambda1 * (PDGF / (k1 + PDGF)) * (1 - mF / K) - mu1)
-    d_M_dt = M * (lambda2 * (CSF / (k2+CSF)) - mu2)
-    d_CSF_dt = beta1 * mF - alpha1 * M * (CSF / (k2 + CSF)) - gamma * CSF
-    d_PDGF_dt = beta2 * M + beta3 * mF - alpha2 * mF * (PDGF / (k1 + PDGF))- gamma * PDGF
-
-    return [d_mF_dt, d_M_dt, d_CSF_dt, d_PDGF_dt]
-
-
-def mF_M_rates(state, t):
-    mF, M = state
-    
-    CSF, PDGF = CSF_PDGF_steady([mF, M])
-    d_mF_dt = mF * (lambda1 * (PDGF / (k1 + PDGF)) * (1 - mF / K) - mu1)
-    d_M_dt = M * (lambda2 * (CSF / (k2 + CSF)) - mu2)
-    return [d_mF_dt, d_M_dt]
-
-def rev_mf_M_rates(state, t):
-    derivatives = mF_M_rates(state, t)
-    return [-d for d in derivatives]
-
-#outputs reverse derivative, state encompasses mF, M concentrations 
-def myofib_macro_ODE_reverse(state, t):
-    derivatives = myofib_macro(state, t)
-    
-    #checking if concentrations are in a reasonable range
-    return [-d for d in derivatives] if all(0 <= x <= 10**7 for x in state) else [0, 0]
+from analysis import mF_M_rates
 
 
 #Step function
