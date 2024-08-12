@@ -7,7 +7,7 @@ from analysis import (
 
 
 
-def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth):
+def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix):
     plt.figure()
     plt.plot(nullcline_M(mFM_space)[0], nullcline_M(mFM_space)[1], 'r', label = 'Macrophage nullcline')
 
@@ -39,8 +39,6 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
     plt.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker = 'o', color = "black")
     plt.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
-    
-    t_separatrix = np.linspace(0, 800, 1000)
 
     separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
     plt.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black', label = 'Separatrix')
@@ -50,7 +48,7 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
     plt.show()
 
 
-def plot_streamlines(mFM_space):
+def plot_streamlines(mFM_space, t_separatrix):
     fig = plt.figure()
     mF_mesh = np.linspace(0, 7, 30)
     M_mesh = np.linspace(0, 7, 30)
@@ -70,7 +68,7 @@ def plot_streamlines(mFM_space):
 
     unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
-    t_separatrix = np.linspace(0, 800, 1000)
+    
     separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
 
     coldfibrosis_mF_M = [cold_fibr[0], 1]
@@ -97,7 +95,7 @@ def plot_streamlines(mFM_space):
     ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
 #Plot the trajectory for one signal function
-def plot_signals_and_trajectories(mFM_space, signal, signal_derivative):
+def plot_signals_and_trajectories(mFM_space, signal, signal_derivative, t):
     coldfibrosis_mF_M = [cold_fibr[0], 1]
     unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
@@ -133,7 +131,7 @@ def plot_signals_and_trajectories(mFM_space, signal, signal_derivative):
     ax1.set_yticks([0, 9], [0, "A0".translate(SUB)])
 
     x_initial = [1, 1] #mF, M
-    t = np.linspace(0, 80, 1000)
+    
     x = odeint(signal_derivative, x_initial, t)
 
     #ax1 plot need to be adjusted
