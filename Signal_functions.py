@@ -10,7 +10,7 @@ class Signal:
         self.start_points = np.array(start_points)
         self.durations = np.array(durations)
         self.amplitudes = np.array(amplitudes)
-        if standard_deviations == [0]:
+        if isinstance(standard_deviations, list) and standard_deviations == [0]:
             self.standard_deviations = np.zeros_like(amplitudes)
         else:
             self.standard_deviations = np.array(standard_deviations)
