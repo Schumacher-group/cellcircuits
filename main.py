@@ -223,7 +223,7 @@ eps = 1e-6
 t_sep = np.linspace(0, 800, 1000)
 
 separatrix_left = odeint(myofib_macro_ODE_reverse, [unstable_soln2[0]-eps, unstable_soln2[1]+eps], t_sep)
-
+print('Unstable fixed point:', unstable_soln2)
 plt.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black', label = 'Separatrix')
 
 separatrix_right = odeint(myofib_macro_ODE_reverse, [unstable_soln2[0]+eps, unstable_soln2[1]-eps], t_sep)
@@ -239,7 +239,6 @@ plt.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], mar
 
 
 plt.legend()
-
 
 
 # to plot the streamlines, we need to redefine functions to find steady CSF and PDGF levels that work for arrays
@@ -323,15 +322,6 @@ ax2.plot(hotfibr2[0], hotfibr2[1], marker = 'o', color = 'black')
 ax2.plot(coldfibr2[0], coldfibr2[1], marker = 'o', color = "black")
 ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
-
-
-"""
-
-
-Done until here
-
-
-"""
 
 def theta(t): # heaviside step function
     return np.heaviside(t, 1)
@@ -423,6 +413,7 @@ for ax2 in (ax21, ax22, ax23):
     ax2.set_ylabel('macrophages')
     ax2.plot(coldfibr2[0], coldfibr2[1], marker='o', color="black")
 
+
 # setting up injury plots
 for ax1 in (ax11, ax12, ax13):
     ax1.set_xticks([])
@@ -460,7 +451,6 @@ pr_y = [0, 9, 0]
 
 ax13.step(pr_x, pr_y, color = 'green')
 ax13.set_title('Prolonged signal')
-
 
 # plotting signals for one constant signal delivered over different lengths of time
 fig, ((ax11, ax12, ax13), (ax21, ax22, ax23)) = plt.subplots(2, 3)
