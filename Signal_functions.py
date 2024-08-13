@@ -19,6 +19,18 @@ class Signal:
     def __repr__(self):
         return f'{self.name}'
     
+    def __add__(self, other):
+        if isinstance(other, Signal):
+            return Signal(
+                name = f'{self.name} + {other.name}',
+                start_points = np.concatenate(self.start_points, other.start_points),
+                durations = np.concatenate(self.durations, other.durations),
+                amplitudes = np.concatenate(self.amplitudes, other.amplitudes),
+                standard_deviations = np.concatenate(self.standard_deviations, other.standard_deviations)
+                )
+        else:
+            return NotImplemented
+    
     def endpoint_of_signal(self):
         return np.max(self.start_points + self.durations)
     
