@@ -3,7 +3,7 @@ from parameters import *
 from analysis import mF_M_rates
 
 class Signal:
-    def __init__(self, name: str, start_points = 0, durations = 1, amplitudes = 1):
+    def __init__(self, name: str, start_points = [0], durations = [1], amplitudes = [1]):
         # convert all arrays to numpy arrays
         self.name = name
         self.start_points = np.array(start_points)
@@ -20,7 +20,7 @@ class Signal:
         return np.heaviside(t, 1)
 
     def basic_signal(self, start, duration, amplitude, t):
-        return amplitude * (self.theta(t) - self.theta(t - (start + duration)))
+        return amplitude * (self.theta(t - start) - self.theta(t - (start + duration)))
     
     #final signal made up as a combination of the basic_signal
     def signal_function(self,t):
