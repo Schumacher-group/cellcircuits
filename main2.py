@@ -1,9 +1,9 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.integrate import odeint
-from scipy.optimize import fsolve
-from analysis import *
-from Signal_functions import *
-from plotting import *
+from Signal_functions import Signal
+from analysis import mF_M_rates, nullcline_mF
+import plotting as plotting
 from parameters import *
 
 
@@ -31,9 +31,15 @@ def main():
     xsmooth = [10**5.7, 10**5.85]
     ysmooth = [nullcline_mF(pt)[1] for pt in xsmooth]
 
-    plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix = t)
+    plotting.plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix = t)
 
-    plot_streamlines(mFM_space, t, t_separatrix)
+    plotting.plot_streamlines(mFM_space, t, t_separatrix)
+
+    #plot_signals_and_trajectories(mFM_space, signal=transient, signal_derivative=transient_derivatives, t=t, t_separatrix=t_separatrix)
+
+    transient_signal = Signal(name = 'Transient signal', start_points = [0], durations = [2], amplitudes = [A_0])
+
+    plotting.plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal = transient_signal)
 
     plt.show()
 
