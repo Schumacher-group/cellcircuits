@@ -23,10 +23,10 @@ class Signal:
         if isinstance(other, Signal):
             return Signal(
                 name = f'{self.name} + {other.name}',
-                start_points = np.concatenate(self.start_points, other.start_points),
-                durations = np.concatenate(self.durations, other.durations),
-                amplitudes = np.concatenate(self.amplitudes, other.amplitudes),
-                standard_deviations = np.concatenate(self.standard_deviations, other.standard_deviations)
+                start_points = np.concatenate((self.start_points, other.start_points)),
+                durations = np.concatenate((self.durations, other.durations)),
+                amplitudes = np.concatenate((self.amplitudes, other.amplitudes)),
+                standard_deviations = np.concatenate((self.standard_deviations, other.standard_deviations))
                 )
         else:
             return NotImplemented
