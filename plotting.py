@@ -161,11 +161,13 @@ def plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal: Signal):
     ax2.set_ylim(1, 10**7)
     ax2.plot(unstable_fixed_point_mF_M[0], unstable_fixed_point_mF_M[1], marker = 'o', color = 'black')
     ax2.plot(hotfibrosis_mF_M[0], hotfibrosis_mF_M[1], marker = 'o', color = 'black')
+    ax2.annotate('hot fibrosis', hotfibrosis_mF_M)
+    ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker='o', color="black")
+    ax2.annotate('cold fibrosis', coldfibrosis_mF_M)
     ax2.set_aspect('equal')
     ax2.set_xticks([10**i for i in range(8)])
     ax2.set_xlabel('myofibroblasts')
     ax2.set_ylabel('macrophages')
-    ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker='o', color="black")
 
     # setting up injury plots
     ax1.set_xticks([])
