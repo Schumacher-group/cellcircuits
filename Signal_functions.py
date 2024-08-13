@@ -2,13 +2,19 @@ import numpy as np
 from parameters import *
 from analysis import mF_M_rates
 
+# as long as standard_deviations is 1 element array numpy treats multiplication as scalar multiplication
 class Signal:
-    def __init__(self, name: str, start_points = [0], durations = [1], amplitudes = [1]):
+    def __init__(self, name: str, start_points = [0], durations = [1], amplitudes = [1], standard_deviations = [0], dt = 0):
         # convert all arrays to numpy arrays
         self.name = name
         self.start_points = np.array(start_points)
         self.durations = np.array(durations)
         self.amplitudes = np.array(amplitudes)
+        if standard_deviations == [0]:
+            self.standard_deviations = np.zeros_like(amplitudes)
+        else:
+            self.standard_deviations = np.array(standard_deviations)
+        self.dt = dt
 
     def __repr__(self):
         return f'{self.name}'
@@ -19,16 +25,35 @@ class Signal:
     def theta(self, t):
         return np.heaviside(t, 1)
 
-    def basic_signal(self, start, duration, amplitude, t):
-        return amplitude * (self.theta(t - start) - self.theta(t - (start + duration)))
+    def basic_signal(self, start, duration, amplitude, t, std = 0, dt = 0):
+        is_scalar = np.isscalar(t)
+        t = np.array(t) #ensure t is a numpy array for computational purposes
+        stochastic_term = std * np.random.normal(0, np.sqrt(dt), t.size)
+        signal = (amplitude + stochastic_term) * (self.theta(t - start) - self.theta(t - (start + duration)))
+        
+        #Make sure that for a scalar input we have a scalar output
+        #This is necessary to also have scalar output for signal_function for scalar input
+        #as this is needed for the 'odeint' function from scipy
+        if is_scalar:
+            return signal.item()
+        return signal
     
     #final signal made up as a combination of the basic_signal
     def signal_function(self,t):
         total_signal = np.zeros_like(t)
-        for start, duration, amplitude in zip(self.start_points, self.durations, self.amplitudes):
-            total_signal += self.basic_signal(start, duration, amplitude, t)
+        for start, duration, amplitude, std in zip(self.start_points, self.durations, self.amplitudes, self.standard_deviations):
+            total_signal += self.basic_signal(start, duration, amplitude, t, std, self.dt)
         return total_signal
 
+
+
+#Generalized signal/block derivative function, added signal increaces macrophage rate
+def adjusted_derivatives_with_signal(signal_function):
+    def derivative_function(state, t):
+        derivatives = mF_M_rates(state, t)
+        derivatives[1] += signal_function(t)
+        return derivatives
+    return derivative_function
 
 #Step function
 def theta(t):
@@ -81,15 +106,6 @@ def blocks2(t):
 
 def blocks3(t):
     return 0.5 * one_signal(t, 2) + 0.3 * one_signal(t - 2, 2) + 0.2 * one_signal(t - 4, 2)
-
-
-#Generalized signal/block derivative function, added signal increaces macrophage rate
-def adjusted_derivatives_with_signal(signal_function):
-    def derivative_function(state, t):
-        derivatives = mF_M_rates(state, t)
-        derivatives[1] += signal_function(t)
-        return derivatives
-    return derivative_function
 
 
 
