@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.integrate import odeint
 from parameters import *
 from analysis import (
@@ -170,21 +171,21 @@ def plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal: Signal):
     ax2.set_ylabel('macrophages')
 
     # setting up injury plots
-    ax1.set_xticks([])
-    ax1.set_yticks([])
+    #ax1.set_xticks([])
+    #ax1.set_yticks([])
     ax1.set_xlim(0,10)
     ax1.set_ylim(0,10)
     ax1.set_aspect('equal')
     ax1.set_xlabel('time (days)')
     ax1.set_ylabel('I(t)')
-    ax1.set_xticks(signal.start_points, signal.start_points + signal.durations)
+    #ax1.set_xticks(np.concatenate(signal.start_points, signal.start_points + signal.durations))
     ax1.set_yticks([1],['A0'.translate(SUB)])
 
     x_initial = [1, 1] #mF, M
     
     x = odeint(signal_derivative, x_initial, t)
 
-    #ax1 plot need to be adjusted
+    
     t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
     ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red')
     ax1.set_title(signal.name)
