@@ -31,15 +31,18 @@ def main():
     xsmooth = [10**5.7, 10**5.85]
     ysmooth = [nullcline_mF(pt)[1] for pt in xsmooth]
 
-    plotting.plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix = t)
+    #plotting.plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix = t)
 
-    plotting.plot_streamlines(mFM_space, t, t_separatrix)
+    #plotting.plot_streamlines(mFM_space, t, t_separatrix)
 
-    #plot_signals_and_trajectories(mFM_space, signal=transient, signal_derivative=transient_derivatives, t=t, t_separatrix=t_separatrix)
+    #plotting.plot_signals_and_trajectories(mFM_space, signal=transient, signal_derivative=transient_derivatives, t=t, t_separatrix=t_separatrix)
 
     transient_signal = Signal(name = 'Transient signal', start_points = [0], durations = [2], amplitudes = [A_0])
+    repetitive_signal = Signal(name = 'Repetitive signal', start_points = [0,4], durations = [2,2], amplitudes = [A_0, A_0])
+    random_transient_signal = Signal(name = 'Random transient', start_points = [0], durations = [2], amplitudes = [A_0], standard_deviations = [A_0/2], dt = 0.1)
 
-    plotting.plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal = transient_signal)
+    
+    plotting.plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal = random_transient_signal)
 
     plt.show()
 
