@@ -1,4 +1,4 @@
-import numpy as np
+#import numpy as np is contained in parameters
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from Signal_functions import Signal
@@ -42,7 +42,7 @@ def main():
     random_transient_signal = Signal(name = 'Random transient', start_points = [0], durations = [2], amplitudes = [A_0], standard_deviations = [A_0/2], dt = 0.1)
 
     
-    plotting.plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal = random_transient_signal)
+    plotting.plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal = transient_signal)
 
     plt.show()
 

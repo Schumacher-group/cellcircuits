@@ -1,4 +1,4 @@
-import numpy as np
+#import numpy as np is contained in parameters
 from parameters import *
 from analysis import mF_M_rates
 

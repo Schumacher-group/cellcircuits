@@ -1,5 +1,5 @@
+#import numpy as np is contained in parameters
 from parameters import *
-import numpy as np
 from scipy.optimize import fsolve
 from scipy.integrate import odeint
 

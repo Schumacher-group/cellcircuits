@@ -1,5 +1,5 @@
+#import numpy as np is contained in parameters
 import matplotlib.pyplot as plt
-import numpy as np
 from scipy.integrate import odeint
 from parameters import *
 from analysis import (
