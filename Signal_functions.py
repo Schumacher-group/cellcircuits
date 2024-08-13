@@ -47,7 +47,7 @@ class Signal:
 
 
 
-#Generalized signal/block derivative function, added signal increaces macrophage rate
+#Generalized signal/block RHS of differential equation, derivative of M, added signal increaces macrophage rate
 def adjusted_derivatives_with_signal(signal_function):
     def derivative_function(state, t):
         derivatives = mF_M_rates(state, t)
