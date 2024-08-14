@@ -63,7 +63,7 @@ class Signal:
 def adjusted_derivatives_with_signal(signal_function):
     def derivative_function(state, t):
         derivatives = mF_M_rates(state, t)
-        derivatives[1] += signal_function(t)
+        derivatives[1] += signal_function(t) #Update the rate for macrophages
         return derivatives
     return derivative_function
 
