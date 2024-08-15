@@ -4,7 +4,7 @@ from analysis import mF_M_rates
 
 
 class Signal:
-    def __init__(self, name: str, start_points = [0], durations = [1], amplitudes = [1], standard_deviations = [0], dt = 0):
+    def __init__(self, name: str, start_points = [0], durations = [1], amplitudes = [1], standard_deviations = [0]):
         # convert all arrays to numpy arrays
         self.name = name
         self.start_points = np.array(start_points)
@@ -14,7 +14,6 @@ class Signal:
             self.standard_deviations = np.zeros_like(amplitudes)
         else:
             self.standard_deviations = np.array(standard_deviations)
-        self.dt = dt
 
     def __repr__(self):
         return f'{self.name}'
@@ -51,10 +50,10 @@ class Signal:
         return signal
     
     #final signal made up as a combination of the basic_signal
-    def signal_function(self,t):
+    def signal_function(self,t, dt = 0):
         total_signal = np.zeros_like(t)
         for start, duration, amplitude, std in zip(self.start_points, self.durations, self.amplitudes, self.standard_deviations):
-            total_signal += self.basic_signal(start, duration, amplitude, t, std, self.dt)
+            total_signal += self.basic_signal(start, duration, amplitude, t, std, dt)
         return total_signal
 
 
