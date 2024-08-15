@@ -10,6 +10,8 @@ class Signal:
         self.start_points = np.array(start_points)
         self.durations = np.array(durations)
         self.amplitudes = np.array(amplitudes)
+
+        #for default value create a zero std array to enable proper addition of signals
         if isinstance(standard_deviations, list) and standard_deviations == [0]:
             self.standard_deviations = np.zeros_like(amplitudes)
         else:
@@ -36,11 +38,10 @@ class Signal:
     def theta(self, t):
         return np.heaviside(t, 1)
 
-    def basic_signal(self, start, duration, amplitude, t, std = 0, dt = 0):
+    def basic_signal(self, start, duration, amplitude, t):
         is_scalar = np.isscalar(t)
         t = np.array(t) #ensure t is a numpy array for computational purposes
-        stochastic_term = std * np.random.normal(0, np.sqrt(dt), t.size)
-        signal = (amplitude + stochastic_term) * (self.theta(t - start) - self.theta(t - (start + duration)))
+        signal = amplitude * (self.theta(t - start) - self.theta(t - (start + duration)))
         
         #Make sure that for a scalar input we have a scalar output
         #This is necessary to also have scalar output for signal_function for scalar input
@@ -49,12 +50,28 @@ class Signal:
             return signal.item()
         return signal
     
-    #final signal made up as a combination of the basic_signal
-    def signal_function(self,t, dt = 0):
+    #signal made up as a combination of the basic_signal without any noise
+    def signal_function(self,t):
         total_signal = np.zeros_like(t)
-        for start, duration, amplitude, std in zip(self.start_points, self.durations, self.amplitudes, self.standard_deviations):
-            total_signal += self.basic_signal(start, duration, amplitude, t, std, dt)
+        for start, duration, amplitude in zip(self.start_points, self.durations, self.amplitudes):
+            total_signal += self.basic_signal(start, duration, amplitude, t)
         return total_signal
+
+    def noise_signal(self, start, duration, std, t):
+        is_scalar = np.isscalar(t)
+        t = np.arrray(t)
+        noise = std * np.random.normal(0, 1, t.size) * (self.theta(t - start) - self.theta(t - (start + duration)))
+
+        if is_scalar:
+            return noise.item()
+        return noise
+    
+    def noise_function(self, t):
+        total_noise = np.zeros_like(t)
+        for start, duration, std in zip(self.start_points, self.durations, self.standard_deviations):
+            total_noise += self.noise_signal(start, duration, std, t)
+        return total_noise 
+
 
 
 
