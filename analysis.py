@@ -24,6 +24,10 @@ def CSF_PDGF_steady(x):
     mF = x[0]
     M = x[1]
     
+    #In case the number of macrophages drops below 0 (e.g. in the numerical integration) interpret it as 0
+    if M < 0:
+        M = 0
+
     # equation for steady CSF is -gamma*(CSF)**2 + CSF*(beta1*mF-alpha1*M-k2*gamma) + beta1*k2*mF
     # equation for steady PDGF is  -gamma*(PDGF)**2 + PDGF * (beta2*M + beta3*mF -alpha2 * mF- gamma * k1) +k1*(beta2*M+beta3*mF)
     
