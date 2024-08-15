@@ -6,7 +6,7 @@ from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
     cold_fibr, mF_M_rates_array, time_taken_rd)
 from Signal_functions import Signal, adjusted_derivatives_with_signal
-
+from euler_maruyama_method import simulate_euler_maruyama
 
 
 def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix):
@@ -193,3 +193,66 @@ def plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal: Signal):
     ax2.plot(x[:,0], x[:,1], 'red')
     ax2.yaxis.set_label_position("right")
     ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
+
+def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, signal: Signal):
+    signal_function = signal.signal_function
+    deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
+    noise_function = signal.noise_function
+    endpoint_of_signal = signal.endpoint_of_signal()
+    
+    coldfibrosis_mF_M = [cold_fibr()[0], 1]
+    unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
+
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.subplots_adjust(hspace= 0.5)
+
+    ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
+    ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.set_xlim(1, 10**7)
+    ax2.set_ylim(1, 10**7)
+    ax2.plot(unstable_fixed_point_mF_M[0], unstable_fixed_point_mF_M[1], marker = 'o', color = 'black')
+    ax2.plot(hotfibrosis_mF_M[0], hotfibrosis_mF_M[1], marker = 'o', color = 'black')
+    ax2.annotate('hot fibrosis', hotfibrosis_mF_M)
+    ax2.plot(coldfibrosis_mF_M[0], coldfibrosis_mF_M[1], marker='o', color="black")
+    ax2.annotate('cold fibrosis', coldfibrosis_mF_M)
+    ax2.set_aspect('equal')
+    ax2.set_xticks([10**i for i in range(8)])
+    ax2.set_xlabel('myofibroblasts')
+    ax2.set_ylabel('macrophages')
+
+    ax1.set_xlim(0,10)
+    ax1.set_ylim(0,10)
+    ax1.set_aspect('equal')
+    ax1.set_xlabel('time (days)')
+    ax1.set_ylabel('I(t)')
+    #ax1.set_xticks(np.concatenate(signal.start_points, signal.start_points + signal.durations))
+    ax1.set_yticks([1],['A0'.translate(SUB)])
+
+    #Using Euler Maruyama method
+    x0 = [1,1]
+    simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_steps = 100, axis = ax2)
+    '''
+    t0 = t_trajectory[0]
+    dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
+    x_initial = [1, 1] #mF, M
+    x = np.zeros((t_trajectory.size, 2))
+    x[0] = x_initial
+
+    for k in range(1,t_trajectory.size):
+        t_step = t0 + k * dt
+        x[k] = x[k-1] + dt * np.array(deterministic_derivative(x[k-1], t_step)) + np.sqrt(dt) * np.array([0, noise(t_step)])
+    '''
+
+    
+    t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
+    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red')
+    ax1.set_title(signal.name)
+
+
+    #ax2.plot(x[:,0], x[:,1], 'red')
+    ax2.yaxis.set_label_position("right")
+    #ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
