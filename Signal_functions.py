@@ -59,7 +59,7 @@ class Signal:
 
     def noise_signal(self, start, duration, std, t):
         is_scalar = np.isscalar(t)
-        t = np.arrray(t)
+        t = np.array(t)
         noise = std * np.random.normal(0, 1, t.size) * (self.theta(t - start) - self.theta(t - (start + duration)))
 
         if is_scalar:
