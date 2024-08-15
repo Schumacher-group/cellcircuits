@@ -2,7 +2,7 @@
 from parameters import *
 from analysis import mF_M_rates
 
-# as long as standard_deviations is 1 element array numpy treats multiplication as scalar multiplication
+
 class Signal:
     def __init__(self, name: str, start_points = [0], durations = [1], amplitudes = [1], standard_deviations = [0], dt = 0):
         # convert all arrays to numpy arrays
