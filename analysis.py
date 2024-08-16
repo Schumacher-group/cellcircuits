@@ -115,7 +115,7 @@ def calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix):
                                                         unstable_fixed_point_mF_M[1] + eps], t_separatrix)
     separatrix_right = odeint(myofib_macro_ODE_reverse, [unstable_fixed_point_mF_M[0] + eps,
                                                          unstable_fixed_point_mF_M[1] - eps], t_separatrix)
-    return separatrix_left, separatrix_right
+    return np.array(separatrix_left), np.array(separatrix_right)
 
 def nulldiff(x):
     return nullcline_M(x)[1] - nullcline_mF(x)[1]
