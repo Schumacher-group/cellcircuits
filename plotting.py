@@ -234,7 +234,29 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
     #Using Euler Maruyama method
     x0 = [1,1]
-    simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_steps = 100, axis = ax2)
+    end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_steps = 10, axis = ax2)
+
+    healing_count = 0
+    fibrosis_count = 0
+
+
+    #left separatrix branch is build from right to left, so we need to revere the array
+    separatrix_left_reverse = separatrix_left[::-1]
+
+    #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point (left separatrix already sufficient)
+    for point in end_points:
+        interpolation = np.interp(point[0], separatrix_left_reverse[:,0] + separatrix_right[:,0],
+                                  separatrix_left_reverse[:,1] + separatrix_right[:,1])
+        if point[1] < interpolation:
+            healing_count += 1
+            print('End point', point)
+            print('Interpolation point', interpolation)
+        else:
+            fibrosis_count += 1
+
+    print('Healing count', healing_count)
+    print('Fibrosis count', fibrosis_count)
+    
     '''
     t0 = t_trajectory[0]
     dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
