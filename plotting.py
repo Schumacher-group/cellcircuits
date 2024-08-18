@@ -234,7 +234,33 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
     #Using Euler Maruyama method
     x0 = [1,1]
-    end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_steps = 10, axis = ax2)
+    num_steps = 100
+    end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_steps = num_steps, axis = ax2)
+
+    '''
+    t0 = t_trajectory[0]
+    dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
+    x_initial = [1, 1] #mF, M
+    x = np.zeros((t_trajectory.size, 2))
+    x[0] = x_initial
+
+    for k in range(1,t_trajectory.size):
+        t_step = t0 + k * dt
+        x[k] = x[k-1] + dt * np.array(deterministic_derivative(x[k-1], t_step)) + np.sqrt(dt) * np.array([0, noise(t_step)])
+    '''
+
+    
+    t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
+    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red')
+    ax1.set_title(signal.name)
+
+
+    #ax2.plot(x[:,0], x[:,1], 'red')
+    ax2.yaxis.set_label_position("right")
+    #ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
+
+
+
 
     healing_count = 0
     fibrosis_count = 0
@@ -257,24 +283,11 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     print('Healing count', healing_count)
     print('Fibrosis count', fibrosis_count)
     
-    '''
-    t0 = t_trajectory[0]
-    dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
-    x_initial = [1, 1] #mF, M
-    x = np.zeros((t_trajectory.size, 2))
-    x[0] = x_initial
+    plt.figure()
 
-    for k in range(1,t_trajectory.size):
-        t_step = t0 + k * dt
-        x[k] = x[k-1] + dt * np.array(deterministic_derivative(x[k-1], t_step)) + np.sqrt(dt) * np.array([0, noise(t_step)])
-    '''
+    labels = ['Healing count', 'Fibrosis count']
+    values = [healing_count, fibrosis_count]
 
-    
-    t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
-    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red')
-    ax1.set_title(signal.name)
+    plt.bar(labels, values, color = ['green', 'red'])
 
-
-    #ax2.plot(x[:,0], x[:,1], 'red')
-    ax2.yaxis.set_label_position("right")
-    #ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
+    plt.title(f'Fibrosis ratio {fibrosis_count/num_steps} and Healing ratio {healing_count/num_steps}')
