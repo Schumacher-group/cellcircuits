@@ -269,7 +269,7 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     #left separatrix branch is build from right to left, so we need to revere the array
     separatrix_left_reverse = separatrix_left[::-1]
 
-    #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point (left separatrix already sufficient)
+    #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
     for point in end_points:
         interpolation = np.interp(point[0], separatrix_left_reverse[:,0] + separatrix_right[:,0],
                                   separatrix_left_reverse[:,1] + separatrix_right[:,1])
