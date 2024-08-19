@@ -16,21 +16,21 @@ def euler_maruyama(deterministic_derivative, noise_function ,t_steps, x0, dt, sq
         deterministic_term = np.array(deterministic_derivative(x[k-1], t_steps[k-1]))
         x[k] = x[k-1] + dt * deterministic_term + sqrt_dt * np.array([0, noise_terms[k-1]])
     
-    return x
+    return x[-1], x
 
-def simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_steps, axis):
+def simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim, axis):
     t0 = t_trajectory[0]
     dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
     sqrt_dt = np.sqrt(dt)
 
     t_steps = np.linspace(t0, t_trajectory[-1], t_trajectory.size)
 
-    end_points = np.zeros((num_steps, 2))
+    end_points = np.zeros((num_sim, 2))
 
-    for num in range(num_steps):
-        x = euler_maruyama(deterministic_derivative, noise_function, t_steps, x0, dt, sqrt_dt)
+    for num in range(num_sim):
+        end_point, x = euler_maruyama(deterministic_derivative, noise_function, t_steps, x0, dt, sqrt_dt)
 
-        end_points[num] = x[-1]
+        end_points[num] = end_point
         axis.plot(x[:,0], x[:,1])
     
     return end_points
