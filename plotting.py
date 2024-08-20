@@ -179,8 +179,10 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     ax1.set_yticklabels(y_tick_labels)
 
     t_signal = np.linspace(0, endpoint_of_signal + 1, 100)
-    ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'red')
+    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'deterministic signal', linestyle = '--')
+    ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'orange', label = 'noisy signal')
     ax1.set_title(signal.name)
+    ax1.legend()
 
     #Using Euler Maruyama method
     x0 = [1,1] #mF and M
