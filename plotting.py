@@ -272,3 +272,54 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     print()
     print("Statistics for fibrosis times:")
     array_statistics(times_to_fibrosis, 'days')
+
+
+
+def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, duration, amplitude, standard_deviation, num_sim):
+    signal = Signal(start_points= [start_point], durations= [duration], amplitudes = [amplitude], standard_deviations= [standard_deviation])
+
+    signal_function = signal.signal_function
+    deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
+    noise_function = signal.noise_function
+    
+    unstable_fixed_point_mF_M, _ = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
+
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
+
+    x0 = [1, 1] #mF and M
+
+    #Parallelized version for Euler Maruyama method
+    def run_parallel_simulation(num):
+        return single_euler_maruyama_simulation(deterministic_derivative, noise_function,
+                                                t_trajectory, x0)
+    
+    #-1 means we use all cores on our device
+    results = Parallel(n_jobs = -1)(delayed(run_parallel_simulation)(num) for num in range(num_sim))
+
+
+    end_points = [result[0] for result in results]
+    fibrosis_count = 0
+
+
+    #left separatrix branch is build from right to left, so we need to revere the array
+    separatrix_left_reverse = separatrix_left[::-1]
+
+    #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
+    #The plus operation '+' concatenates uual Python arrays
+    for end_point in end_points:
+        interpolation = np.interp(end_point[0], separatrix_left_reverse[:, 0] + separatrix_right[:, 0],
+                                  separatrix_left_reverse[:, 1] + separatrix_right[:, 1])
+        if end_point[1] > interpolation:
+            fibrosis_count += 1
+
+    return fibrosis_count/num_sim        
+
+def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point, duration, amplitude, standard_deviations, num_sim):
+    standard_deviations = np.array(standard_deviations)
+    fibrosis_counts = np.array([])
+    
+    for standard_deviation in standard_deviations:
+        fibrosis_counts = np.append(fibrosis_counts, 
+                                    get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, duration, amplitude, standard_deviation, num_sim))
+
+    plt.plot(standard_deviations/A_0, fibrosis_counts)
