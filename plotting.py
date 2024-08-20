@@ -222,7 +222,6 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
 
  
-    #ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
 
 
