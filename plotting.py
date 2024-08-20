@@ -1,10 +1,11 @@
 #import numpy as np is contained in parameters
 import matplotlib.pyplot as plt
+import seaborn as sns
 from scipy.integrate import odeint
 from parameters import *
 from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
-    cold_fibr, mF_M_rates_array, time_taken_rd)
+    cold_fibr, mF_M_rates_array, time_taken_rd, array_statistics)
 from Signal_functions import Signal, adjusted_derivatives_with_signal
 from euler_maruyama_method import simulate_euler_maruyama, single_euler_maruyama_simulation
 
@@ -232,6 +233,7 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
     #left separatrix branch is build from right to left, so we need to revere the array
     separatrix_left_reverse = separatrix_left[::-1]
+    times_to_fibrosis = []
 
     #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
     #The plus operation '+' concatenates uual Python arrays
@@ -244,15 +246,32 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
         else:
             fibrosis_count += 1
             ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.3, color ='red')
+            times_to_fibrosis.append(time_taken_rd(trajectory, t_trajectory, hotfibrosis_mF_M, unstable_fixed_point_mF_M))
+        
 
     print('Healing count', healing_count)
     print('Fibrosis count', fibrosis_count)
+
     
     plt.figure()
 
+    
     labels = ['Healing count', 'Fibrosis count']
     values = [healing_count, fibrosis_count]
 
+    plt.subplot(1, 2, 1)
     plt.bar(labels, values, color = ['green', 'red'])
 
-    plt.title(f'Fibrosis ratio {fibrosis_count/num_sim} and Healing ratio {healing_count/num_sim}')
+    plt.title(f'Fibrosis ratio {fibrosis_count/num_sim}')
+
+    plt.subplot(1, 2, 2)
+    #empty sequences like [] return false
+    if not times_to_fibrosis:
+        plt.title(f'No trajectories ended in fibrosis')
+    else:
+        sns.violinplot(x= times_to_fibrosis) 
+        plt.title(f'Time to fibrosis (n={fibrosis_count})')
+        plt.xlabel('Time (day)')
+    
+    print("Statistics for fibrosis times")
+    array_statistics(times_to_fibrosis)
