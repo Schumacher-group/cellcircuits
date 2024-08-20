@@ -167,16 +167,18 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.subplots_adjust(hspace= 0.5)
 
-
-    ax1.set_xlim(0,10)
-    ax1.set_ylim(0,10)
-    ax1.set_aspect('equal')
+    ax1.set_xlim(0,endpoint_of_signal + 1)
+    ax1.set_ylim(-2,10)
+    #ax1.set_aspect('equal')
     ax1.set_xlabel('time (days)')
     ax1.set_ylabel('I(t)')
-    #ax1.set_xticks(np.concatenate(signal.start_points, signal.start_points + signal.durations))
-    ax1.set_yticks([1],['A0'.translate(SUB)])
+    y_ticks = np.arange(-2, 5)
+    y_tick_labels = [f'{i}*$A_0$'if i != 0 else '0' for i in y_ticks]
 
-    t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
+    ax1.set_yticks(y_ticks)
+    ax1.set_yticklabels(y_tick_labels)
+
+    t_signal = np.linspace(0, endpoint_of_signal + 1, 100)
     ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'red')
     ax1.set_title(signal.name)
 
