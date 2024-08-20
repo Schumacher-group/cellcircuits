@@ -131,8 +131,6 @@ def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
     ax2.set_ylabel('macrophages')
 
     # setting up injury plots
-    #ax1.set_xticks([])
-    #ax1.set_yticks([])
     ax1.set_xlim(0,10)
     ax1.set_ylim(0,10)
     ax1.set_aspect('equal')
@@ -217,18 +215,6 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
         ax2.plot(trajectory[:, 0], trajectory[:, 1])
 
     
-
-    '''
-    t0 = t_trajectory[0]
-    dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
-    x_initial = [1, 1] #mF, M
-    x = np.zeros((t_trajectory.size, 2))
-    x[0] = x_initial
-
-    for k in range(1,t_trajectory.size):
-        t_step = t0 + k * dt
-        x[k] = x[k-1] + dt * np.array(deterministic_derivative(x[k-1], t_step)) + np.sqrt(dt) * np.array([0, noise(t_step)])
-    '''
 
     
     t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
