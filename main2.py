@@ -31,9 +31,9 @@ def main():
     xsmooth = [10**5.7, 10**5.85]
     ysmooth = [nullcline_mF(pt)[1] for pt in xsmooth]
 
-    plotting.plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix = t_separatrix)
+    #plotting.plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix = t_separatrix)
 
-    plotting.plot_streamlines(mFM_space, t, t_separatrix)
+    #plotting.plot_streamlines(mFM_space, t, t_separatrix)
 
 
     transient_signal = Signal(name = 'Transient signal', start_points = [0], durations = [2], amplitudes = [1.2*A_0])
@@ -41,10 +41,18 @@ def main():
     random_transient_signal = Signal(name = 'Random transient', start_points = [0], durations = [2], amplitudes = [A_0], standard_deviations = [A_0])
     combined_signal = transient_signal + repetitive_signal
     
-    plotting.plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
+    #Use different plot functions for determinstic and random signals as one implements the stochastic euler method
+    #plotting.plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
 
-    plotting.plot_random_signal_and_trajectory(mFM_space, t, t_separatrix, signal = random_transient_signal)
+    num_sim = 500
+    #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
 
+    #print(plotting.get_fibrosis_ratio(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0, standard_deviation = A_0, num_sim = num_sim))
+
+    standard_deviations = [i*A_0 for i in np.arange(0, 5, 0.5)]
+
+    plotting.plot_fibrosis_ratios(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0,
+                                  standard_deviations = standard_deviations, num_sim = num_sim,)
     plt.show()
 
 
