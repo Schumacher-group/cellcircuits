@@ -195,10 +195,10 @@ def time_taken(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M):
 def time_taken_rd(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M): 
     return round(time_taken(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M), 2)
 
-def array_statistics(array):
-    print(f"Count: {len(array)}")
-    print(f"Mean: {np.mean(array)}")
-    print(f"StdDev: {np.std(array)}")
-    print(f"Minimum: {np.min(array)}")
-    print(f"Maximum: {np.max(array)}")
-    print(f"Median: {np.median(array)}")
+def array_statistics(array, unit = ''):
+    print(f"Count: {len(array)} {unit}")
+    print(f"Mean: {np.mean(array)} {unit}")
+    print(f"StdDev: {np.std(array)} {unit}")
+    print(f"Minimum: {np.min(array)} {unit}")
+    print(f"Maximum: {np.max(array)} {unit}")
+    print(f"Median: {np.median(array)} {unit}")
