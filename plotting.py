@@ -329,3 +329,4 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point, dur
     ax.set_ylim([0,1])
 
     ax.plot(standard_deviations/A_0, fibrosis_counts)
+    ax.scatter(standard_deviations/A_0, fibrosis_counts,color = 'red')
