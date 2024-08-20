@@ -153,7 +153,7 @@ def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
     ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
 
-def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, signal: Signal):
+def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, signal: Signal, num_sim):
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
     noise_function = signal.noise_function
@@ -195,7 +195,6 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
     #Using Euler Maruyama method
     x0 = [1,1]
-    num_sim = 10
 
     #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
 
