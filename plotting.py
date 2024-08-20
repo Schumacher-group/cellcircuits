@@ -197,15 +197,18 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
     #Using Euler Maruyama method
     x0 = [1,1]
-    num_sim = 1000
+    num_sim = 10
+
     #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
 
 
+    #Parallelized version for Euler Maruyama method
     def run_parallel_simulation(num):
         return single_euler_maruyama_simulation(deterministic_derivative, noise_function,
                                                 t_trajectory, x0)
     
-    results = Parallel(n_jobs = 4)(delayed(run_parallel_simulation)(num) for num in range(num_sim))
+    #-1 means we use all cores on our device
+    results = Parallel(n_jobs = -1)(delayed(run_parallel_simulation)(num) for num in range(num_sim))
 
     end_points = [result[0] for result in results]
     trajectories = [result[1] for result in results]
