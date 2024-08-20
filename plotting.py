@@ -322,4 +322,10 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point, dur
         fibrosis_counts = np.append(fibrosis_counts, 
                                     get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, duration, amplitude, standard_deviation, num_sim))
 
-    plt.plot(standard_deviations/A_0, fibrosis_counts)
+    _, ax = plt.subplots()
+
+    ax.set_xlabel("std")
+    ax.set_title(f'Fibrosis ratio for n = {num_sim}')
+    ax.set_ylim([0,1])
+
+    ax.plot(standard_deviations/A_0, fibrosis_counts)
