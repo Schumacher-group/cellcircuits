@@ -6,7 +6,10 @@ from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
     cold_fibr, mF_M_rates_array, time_taken_rd)
 from Signal_functions import Signal, adjusted_derivatives_with_signal
-from euler_maruyama_method import simulate_euler_maruyama
+from euler_maruyama_method import simulate_euler_maruyama, single_euler_maruyama_simulation
+
+from joblib import Parallel, delayed
+import time
 
 
 def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix):
@@ -194,6 +197,7 @@ def plot_signals_and_trajectories2(mFM_space, t, t_separatrix, signal: Signal):
     ax2.yaxis.set_label_position("right")
     ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
+
 def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, signal: Signal):
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
@@ -232,10 +236,27 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     #ax1.set_xticks(np.concatenate(signal.start_points, signal.start_points + signal.durations))
     ax1.set_yticks([1],['A0'.translate(SUB)])
 
+    start = time.perf_counter()
+
     #Using Euler Maruyama method
     x0 = [1,1]
-    num_steps = 100
-    end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_steps = num_steps, axis = ax2)
+    num_sim = 1000
+    #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
+
+
+    def run_parallel_simulation(num):
+        return single_euler_maruyama_simulation(deterministic_derivative, noise_function,
+                                                t_trajectory, x0)
+    
+    results = Parallel(n_jobs = 4)(delayed(run_parallel_simulation)(num) for num in range(num_sim))
+
+    end_points = [result[0] for result in results]
+    trajectories = [result[1] for result in results]
+
+    for trajectory in trajectories:
+        ax2.plot(trajectory[:, 0], trajectory[:, 1])
+
+    
 
     '''
     t0 = t_trajectory[0]
@@ -270,15 +291,15 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     separatrix_left_reverse = separatrix_left[::-1]
 
     #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
+    #The plus operation '+' concatenates uual Python arrays
     for point in end_points:
         interpolation = np.interp(point[0], separatrix_left_reverse[:,0] + separatrix_right[:,0],
                                   separatrix_left_reverse[:,1] + separatrix_right[:,1])
         if point[1] < interpolation:
             healing_count += 1
-            print('End point', point)
-            print('Interpolation point', interpolation)
         else:
             fibrosis_count += 1
+
 
     print('Healing count', healing_count)
     print('Fibrosis count', fibrosis_count)
@@ -290,4 +311,6 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
     plt.bar(labels, values, color = ['green', 'red'])
 
-    plt.title(f'Fibrosis ratio {fibrosis_count/num_steps} and Healing ratio {healing_count/num_steps}')
+    plt.title(f'Fibrosis ratio {fibrosis_count/num_sim} and Healing ratio {healing_count/num_sim}')
+    stop = time.perf_counter()
+    print(f'Total time for random signal is {stop-start} seconds')
