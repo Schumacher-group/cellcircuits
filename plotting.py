@@ -219,9 +219,6 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     ax2.yaxis.set_label_position("right")
 
 
-    for trajectory in trajectories:
-        ax2.plot(trajectory[:, 0], trajectory[:, 1])
-
  
     #ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
@@ -237,14 +234,15 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
     #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
     #The plus operation '+' concatenates uual Python arrays
-    for point in end_points:
-        interpolation = np.interp(point[0], separatrix_left_reverse[:,0] + separatrix_right[:,0],
-                                  separatrix_left_reverse[:,1] + separatrix_right[:,1])
-        if point[1] < interpolation:
+    for trajectory, end_point in zip(trajectories, end_points):
+        interpolation = np.interp(end_point[0], separatrix_left_reverse[:, 0] + separatrix_right[:, 0],
+                                  separatrix_left_reverse[:, 1] + separatrix_right[:, 1])
+        if end_point[1] < interpolation:
             healing_count += 1
+            ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.3, color = 'green')
         else:
             fibrosis_count += 1
-
+            ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.3, color ='red')
 
     print('Healing count', healing_count)
     print('Fibrosis count', fibrosis_count)
