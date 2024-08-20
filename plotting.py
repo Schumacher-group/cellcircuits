@@ -167,6 +167,38 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.subplots_adjust(hspace= 0.5)
 
+
+    ax1.set_xlim(0,10)
+    ax1.set_ylim(0,10)
+    ax1.set_aspect('equal')
+    ax1.set_xlabel('time (days)')
+    ax1.set_ylabel('I(t)')
+    #ax1.set_xticks(np.concatenate(signal.start_points, signal.start_points + signal.durations))
+    ax1.set_yticks([1],['A0'.translate(SUB)])
+
+    t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
+    ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'red')
+    ax1.set_title(signal.name)
+
+    #Using Euler Maruyama method
+    x0 = [1,1] #mF and M
+
+    #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
+
+
+    #Parallelized version for Euler Maruyama method
+    def run_parallel_simulation(num):
+        return single_euler_maruyama_simulation(deterministic_derivative, noise_function,
+                                                t_trajectory, x0)
+    
+    #-1 means we use all cores on our device
+    results = Parallel(n_jobs = -1)(delayed(run_parallel_simulation)(num) for num in range(num_sim))
+
+
+    end_points = [result[0] for result in results]
+    trajectories = [result[1] for result in results]
+
+
     ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
     ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
     ax2.set_xscale('log')
@@ -182,47 +214,13 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     ax2.set_xticks([10**i for i in range(8)])
     ax2.set_xlabel('myofibroblasts')
     ax2.set_ylabel('macrophages')
+    ax2.yaxis.set_label_position("right")
 
-    ax1.set_xlim(0,10)
-    ax1.set_ylim(0,10)
-    ax1.set_aspect('equal')
-    ax1.set_xlabel('time (days)')
-    ax1.set_ylabel('I(t)')
-    #ax1.set_xticks(np.concatenate(signal.start_points, signal.start_points + signal.durations))
-    ax1.set_yticks([1],['A0'.translate(SUB)])
-
-    start = time.perf_counter()
-
-    #Using Euler Maruyama method
-    x0 = [1,1]
-
-    #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
-
-
-    #Parallelized version for Euler Maruyama method
-    def run_parallel_simulation(num):
-        return single_euler_maruyama_simulation(deterministic_derivative, noise_function,
-                                                t_trajectory, x0)
-    
-    #-1 means we use all cores on our device
-    results = Parallel(n_jobs = -1)(delayed(run_parallel_simulation)(num) for num in range(num_sim))
-
-    end_points = [result[0] for result in results]
-    trajectories = [result[1] for result in results]
 
     for trajectory in trajectories:
         ax2.plot(trajectory[:, 0], trajectory[:, 1])
 
-    
-
-    
-    t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
-    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red')
-    ax1.set_title(signal.name)
-
-
-    #ax2.plot(x[:,0], x[:,1], 'red')
-    ax2.yaxis.set_label_position("right")
+ 
     #ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
 
@@ -257,5 +255,3 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     plt.bar(labels, values, color = ['green', 'red'])
 
     plt.title(f'Fibrosis ratio {fibrosis_count/num_sim} and Healing ratio {healing_count/num_sim}')
-    stop = time.perf_counter()
-    print(f'Total time for random signal is {stop-start} seconds')
