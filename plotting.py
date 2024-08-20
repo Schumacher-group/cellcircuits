@@ -154,7 +154,7 @@ def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
     ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
 
-def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, signal: Signal, num_sim):
+def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, signal: Signal, num_sim):
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
     noise_function = signal.noise_function
@@ -223,10 +223,6 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
 
 
  
-
-
-
-
     healing_count = 0
     fibrosis_count = 0
 
@@ -242,10 +238,10 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
                                   separatrix_left_reverse[:, 1] + separatrix_right[:, 1])
         if end_point[1] < interpolation:
             healing_count += 1
-            ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.3, color = 'green')
+            ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.1, color = 'green')
         else:
             fibrosis_count += 1
-            ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.3, color ='red')
+            ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.1, color ='red')
             times_to_fibrosis.append(time_taken_rd(trajectory, t_trajectory, hotfibrosis_mF_M, unstable_fixed_point_mF_M))
         
 
@@ -262,7 +258,7 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     plt.subplot(1, 2, 1)
     plt.bar(labels, values, color = ['green', 'red'])
 
-    plt.title(f'Fibrosis ratio {fibrosis_count/num_sim}')
+    plt.title(f'Fibrosis ratio {fibrosis_count/num_sim} (n = {num_sim})')
 
     plt.subplot(1, 2, 2)
     #empty sequences like [] return false
@@ -275,4 +271,4 @@ def plot_random_signal_and_trajectory(mFM_space, t_trajectory, t_separatrix, sig
     
     print()
     print("Statistics for fibrosis times:")
-    array_statistics(times_to_fibrosis)
+    array_statistics(times_to_fibrosis, 'days')
