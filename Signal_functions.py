@@ -4,7 +4,7 @@ from analysis import mF_M_rates
 
 
 class Signal:
-    def __init__(self, name: str, start_points = [0], durations = [1], amplitudes = [1], standard_deviations = [0]):
+    def __init__(self, name = 'Input Signal', start_points = [0], durations = [1], amplitudes = [1], standard_deviations = [0]):
         # convert all arrays to numpy arrays
         self.name = name
         self.start_points = np.array(start_points)
