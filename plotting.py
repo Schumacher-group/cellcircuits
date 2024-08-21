@@ -185,8 +185,10 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax1.set_title(signal.name)
     ax1.legend()
 
-    #Using Euler Maruyama method
-    x0 = [1,1] #mF and M
+    '''
+    Using Euler-Maruyama method to solve the stochastic differential equation
+    '''
+    x0 = [1,1] #initial mF and M point
 
     #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
 
