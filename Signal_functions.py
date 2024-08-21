@@ -57,6 +57,7 @@ class Signal:
             total_signal += self.basic_signal(start, duration, amplitude, t)
         return total_signal
 
+    #Simple noise with mean 0 and a std
     def noise_signal(self, start, duration, std, t):
         is_scalar = np.isscalar(t)
         t = np.array(t)
@@ -66,6 +67,7 @@ class Signal:
             return noise.item()
         return noise
     
+    #Overlay all noise functions
     def noise_function(self, t):
         total_noise = np.zeros_like(t)
         for start, duration, std in zip(self.start_points, self.durations, self.standard_deviations):
