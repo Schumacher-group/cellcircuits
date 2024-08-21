@@ -151,6 +151,7 @@ def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
     ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
 
+
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, signal: Signal, num_sim):
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
@@ -323,7 +324,8 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point, dur
     
     for standard_deviation in standard_deviations:
         fibrosis_counts = np.append(fibrosis_counts, 
-                                    get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, duration, amplitude, standard_deviation, num_sim))
+                                    get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix,
+                                                       start_point, duration, amplitude, standard_deviation, num_sim))
 
     _, ax = plt.subplots()
 
