@@ -269,9 +269,10 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
         plt.title(f'Time to fibrosis (n={fibrosis_count})')
         plt.xlabel('Time (day)')
     
-    print()
-    print("Statistics for fibrosis times:")
-    array_statistics(times_to_fibrosis, 'days')
+    if not fibrosis_count:
+        print()
+        print("Statistics for fibrosis times:")
+        array_statistics(times_to_fibrosis, 'days')
 
 
 
