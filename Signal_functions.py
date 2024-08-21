@@ -85,6 +85,8 @@ def adjusted_derivatives_with_signal(signal_function):
         return derivatives
     return derivative_function
 
+
+'''
 #Step function
 def theta(t):
     return np.heaviside(t, 1)
@@ -187,3 +189,4 @@ def blocks3_derivatives(state, t):
     derivatives = mF_M_rates(state, t)
     derivatives[1] += blocks3(t)
     return derivatives
+'''
