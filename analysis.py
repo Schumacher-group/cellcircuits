@@ -5,7 +5,7 @@ from scipy.integrate import odeint
 
 
 #Outputs list of gradients, state encompasses concentrations for mF, M, CSF and PDGF as cells per ml
-def myofib_macro(state, t): # outputs list of gradients
+def myofib_macro(state): # outputs list of gradients
     
     mF, M, CSF, PDGF = state
 
@@ -43,6 +43,7 @@ def CSF_PDGF_steady(x):
                     root_pairs.append(PDGF_root)
     return(root_pairs)
 
+#t parameter is necessary for using the odeint function from scipy.integrate
 def mF_M_rates(state, t):
     mF, M = state
     CSF, PDGF = CSF_PDGF_steady([mF, M])
@@ -61,7 +62,8 @@ def rev_mf_M_rates(state, t):
     return [-d for d in derivatives]
 
 
-def CSF_PDGF_steady_array(x): # finds steady CSF and PDGF levels for given mF and M levels
+# finds steady CSF and PDGF levels for given mF and M levels numerically from the steady state equations
+def CSF_PDGF_steady_array(x):
     mF = x[0]
     M = x[1]
     # equation for steady CSF is -gamma*(CSF)**2 + CSF*(beta1*mF-alpha1*M-k2*gamma) + beta1*k2*mF
@@ -87,7 +89,7 @@ def CSF_PDGF_steady_array(x): # finds steady CSF and PDGF levels for given mF an
     return [CSF_array, PDGF_array] 
 
 
-def mF_M_rates_array(exp_mF, exp_M, t):
+def mF_M_rates_array(exp_mF, exp_M):
     # we need dmFdt and dMdt to be plotted at different values as streamplot can only take in linearly spaced values,
     # so we take in the exponents of mF and M values to get logarithmically spaced
     mF = 10**exp_mF
