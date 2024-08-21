@@ -190,6 +190,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     '''
     x0 = [1,1] #initial mF and M point
 
+    #non parallelized version of the Euler-Maruyama method
     #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
 
 
@@ -309,7 +310,7 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, durat
     separatrix_left_reverse = separatrix_left[::-1]
 
     #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
-    #The plus operation '+' concatenates uual Python arrays
+    #The plus operation '+' concatenates usual Python arrays
     for end_point in end_points:
         interpolation = np.interp(end_point[0], separatrix_left_reverse[:, 0] + separatrix_right[:, 0],
                                   separatrix_left_reverse[:, 1] + separatrix_right[:, 1])
