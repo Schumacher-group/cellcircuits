@@ -10,7 +10,6 @@ from Signal_functions import Signal, adjusted_derivatives_with_signal
 from euler_maruyama_method import simulate_euler_maruyama, single_euler_maruyama_simulation
 
 from joblib import Parallel, delayed
-import time
 
 
 def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix):
@@ -22,7 +21,6 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
     plt.plot(nullcline_mF(mFnull3)[0], nullcline_mF(mFnull3)[1], 'b')
     plt.plot(xsmooth, ysmooth, 'b')
 
-    #print(nullcline_mF(10**5.7), nullcline_mF(10**5.85), nullcline_mF(10**5.95), nullcline_mF(10**6.05))
 
     plt.xlabel('Myofibroblasts')
     plt.ylabel('Macrophages')
@@ -88,7 +86,6 @@ def plot_streamlines(mFM_space, t, t_separatrix):
     ax2.set_ylabel('macrophages')
 
 
-
     ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
     ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
     ax2.set_xscale('log')
@@ -115,6 +112,14 @@ def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.subplots_adjust(hspace= 0.5)
 
+    # setting up injury plots
+    ax1.set_xlim(0,10)
+    ax1.set_ylim(0,10)
+    ax1.set_aspect('equal')
+    ax1.set_xlabel('time (days)')
+    ax1.set_ylabel('I(t)')
+    ax1.set_yticks([1],['A0'.translate(SUB)])
+
     ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
     ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
     ax2.set_xscale('log')
@@ -131,14 +136,6 @@ def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
     ax2.set_xlabel('myofibroblasts')
     ax2.set_ylabel('macrophages')
 
-    # setting up injury plots
-    ax1.set_xlim(0,10)
-    ax1.set_ylim(0,10)
-    ax1.set_aspect('equal')
-    ax1.set_xlabel('time (days)')
-    ax1.set_ylabel('I(t)')
-    #ax1.set_xticks(np.concatenate(signal.start_points, signal.start_points + signal.durations))
-    ax1.set_yticks([1],['A0'.translate(SUB)])
 
     x_initial = [1, 1] #mF, M
     
@@ -168,6 +165,9 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.subplots_adjust(hspace= 0.5)
 
+    '''
+    Setting up the plot for the signal function
+    '''
     ax1.set_xlim(0,endpoint_of_signal + 1)
     ax1.set_ylim(-2,10)
     #ax1.set_aspect('equal')
@@ -175,14 +175,13 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax1.set_ylabel('I(t)')
     y_ticks = np.arange(-2, 5)
     y_tick_labels = [f'{i}*$A_0$'if i != 0 else '0' for i in y_ticks]
-
     ax1.set_yticks(y_ticks)
     ax1.set_yticklabels(y_tick_labels)
 
     t_signal = np.linspace(0, endpoint_of_signal + 1, 100)
     ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'deterministic signal', linestyle = '--')
     ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'orange', label = 'noisy signal')
-    ax1.set_title(signal.name)
+    ax1.set_title(f'{signal.name} (Reprasentation)')
     ax1.legend()
 
     '''
@@ -205,7 +204,9 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     end_points = [result[0] for result in results]
     trajectories = [result[1] for result in results]
 
-
+    '''
+    Setting up the plot for inflammation trajectories
+    '''
     ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
     ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
     ax2.set_xscale('log')
@@ -224,7 +225,6 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax2.yaxis.set_label_position("right")
 
 
- 
     healing_count = 0
     fibrosis_count = 0
 
@@ -234,7 +234,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     times_to_fibrosis = []
 
     #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
-    #The plus operation '+' concatenates uual Python arrays
+    #The plus operator '+' concatenates usual Python arrays
     for trajectory, end_point in zip(trajectories, end_points):
         interpolation = np.interp(end_point[0], separatrix_left_reverse[:, 0] + separatrix_right[:, 0],
                                   separatrix_left_reverse[:, 1] + separatrix_right[:, 1])
