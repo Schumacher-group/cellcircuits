@@ -1,8 +1,10 @@
-#Implement a numerical solution to stochastic differential equation
-#dX_t = mu(X_t,t) dt + sigma(X_t,t) dW_t where dW_t is a Wiener process (Brownian motion) using Euler Maruyama method
-#Our signal function is given as [dmF, dM + signal + noise], so we need to apply the following recursion
-# [mF_n+1, dM_n+1] = [mF_n, M_n] + [mF_n * dt, (dM_n + signal)*dt  + sqrt(dt) * noise] 
-
+'''
+Implement a numerical solution to stochastic differential equation
+dX_t = mu(X_t,t) dt + sigma(X_t,t) dW_t where dW_t is a Wiener process (Brownian motion) using Euler Maruyama method
+Our signal function is given as [dmF, dM + signal + noise], so we need to apply the following recursion
+ [mF_n+1, dM_n+1] = [mF_n, M_n] + [mF_n * dt, (dM_n + signal)*dt  + sqrt(dt) * noise] 
+'''
+ 
 import numpy as np
 
 def euler_maruyama(deterministic_derivative, noise_function ,t_steps, x0, dt, sqrt_dt):
