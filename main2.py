@@ -1,8 +1,7 @@
 #import numpy as np is contained in parameters
 import matplotlib.pyplot as plt
-from scipy.integrate import odeint
 from Signal_functions import Signal
-from analysis import mF_M_rates, nullcline_mF
+from analysis import nullcline_mF
 import plotting as plotting
 from parameters import *
 
@@ -37,9 +36,9 @@ def main():
     combined_signal = transient_signal + repetitive_signal
     
     #Use different plot functions for determinstic and random signals as one implements the stochastic euler method
-    #plotting.plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
+    plotting.plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
 
-    num_sim = 500
+    num_sim = 5
     #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
 
     #print(plotting.get_fibrosis_ratio(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0, standard_deviation = A_0, num_sim = num_sim))
@@ -48,6 +47,7 @@ def main():
 
     plotting.plot_fibrosis_ratios(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0,
                                   standard_deviations = standard_deviations, num_sim = num_sim,)
+    
     plt.show()
 
 
