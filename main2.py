@@ -12,16 +12,11 @@ def main():
     t = np.linspace(0, 100, 1000)
     t_separatrix = np.linspace(0, 800, 1000)
 
-    #initial starting points
-    x0 = [6*10**3, 7*10**3]
-
-    x_ = odeint(mF_M_rates, x0, t)
-    mF = x_[:,0]
-    M = x_[:,1]
 
     #Nullcline parameters for plotting
     mFM_space = np.logspace(0, 7, 10**4)
 
+    #Between those intervalls the nullcline for mF has poles, so we smooth those out  
     mFnull1 = np.logspace(0, 5.7, 10**3)
     mFnull2 = np.logspace(5.85, 5.95, 10**3)
     mFnull3 = np.logspace(6.05, 7, 10**3)
