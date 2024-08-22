@@ -182,7 +182,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     t_signal = np.linspace(0, endpoint_of_signal + 1, 100)
     ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'deterministic signal', linestyle = '--')
     ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'orange', label = 'noisy signal')
-    ax1.set_title(f'{signal.name} (Reprasentation)')
+    ax1.set_title(f'{signal.name} (Reprasentation) \nstd = {signal.standard_deviations}')
     ax1.legend()
 
     '''
@@ -272,7 +272,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
         sns.violinplot(x= times_to_fibrosis) 
         plt.title(f'Time to fibrosis (n={fibrosis_count})')
         plt.xlabel('Time (day)')
-        
+
         print()
         print("Statistics for fibrosis times:")
         array_statistics(times_to_fibrosis, 'days')
