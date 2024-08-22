@@ -12,7 +12,7 @@ def euler_maruyama(deterministic_derivative, noise_function ,t_steps, x0, dt, sq
     x = np.zeros((t_steps.size, 2))
     x[0] = x0
 
-    noise_terms = np.array([noise_function(t) for t in t_steps])
+    noise_terms = noise_function(t_steps)
 
     for k in range(1, t_steps.size):
         deterministic_term = np.array(deterministic_derivative(x[k-1], t_steps[k-1]))
