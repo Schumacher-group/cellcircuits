@@ -1,5 +1,5 @@
 #import numpy as np is contained in parameters
-import matplotlib.pyplot as plt
+from matplotlib.pyplot import show
 from Signal_functions import Signal
 from analysis import nullcline_mF
 import plotting as plotting
@@ -36,19 +36,19 @@ def main():
     combined_signal = transient_signal + repetitive_signal
     
     #Use different plot functions for determinstic and random signals as one implements the stochastic euler method
-    plotting.plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
+    #plotting.plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
 
-    num_sim = 5
-    #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
+    num_sim = 1
+    plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
 
-    #print(plotting.get_fibrosis_ratio(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0, standard_deviation = A_0, num_sim = num_sim))
 
-    standard_deviations = [i*A_0 for i in np.arange(0, 5, 0.5)]
+    standard_deviations = [i*A_0 for i in np.arange(0, 5, 0.25)]
 
-    plotting.plot_fibrosis_ratios(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0,
-                                  standard_deviations = standard_deviations, num_sim = num_sim,)
+    #plotting.plot_fibrosis_ratios(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0,
+    #                              standard_deviations = standard_deviations, num_sim = num_sim,)
     
-    plt.show()
+    #Depict the plots
+    show()
 
 
 if __name__ == '__main__':
