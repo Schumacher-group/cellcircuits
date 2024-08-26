@@ -36,13 +36,14 @@ def main():
     combined_signal = transient_signal + repetitive_signal
     
     #Use different plot functions for determinstic and random signals as one implements the stochastic euler method
-    #plotting.plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
 
-    num_sim = 1
-    plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
+    plotting.signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
+
+    num_sim = 10
+    #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
 
 
-    standard_deviations = [i*A_0 for i in np.arange(0, 5, 0.25)]
+    standard_deviations = [i*A_0 for i in np.arange(0, 5, 0.5)]
 
     #plotting.plot_fibrosis_ratios(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0,
     #                              standard_deviations = standard_deviations, num_sim = num_sim,)
