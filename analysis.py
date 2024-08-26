@@ -176,6 +176,12 @@ def cold_fibr():
     print("\n coldmF:", coldmF,"\n")
     return coldmF
 
+def check_hot_fibrosis(end_point, separatrix_left, separatrix_right):
+    interpolation = np.interp(end_point[0], separatrix_left[:, 0] + separatrix_right[:, 0],
+                              separatrix_left[:, 1] + separatrix_right[:, 1])
+    if end_point[1] < interpolation:
+        return True
+    else: False
 
 
 def time_taken(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M):
