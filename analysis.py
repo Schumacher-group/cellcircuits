@@ -184,6 +184,20 @@ def check_hot_fibrosis(end_point, separatrix_left, separatrix_right):
     else: False
 
 
+#Determine first crossing indices for integrated trajectory
+def find_first_crossing_index(x, left_interp, right_interp):
+    
+    left_values = left_interp(x[:, 0])
+    right_values = right_interp(x[:, 0])
+
+    #check if the trajectory crosses the separatrix
+    crosses = (x[:, 1] < left_values) | (x[:, 1] > right_values)
+
+    #find first index where crossing occours
+    crossing_indices = np.where(crosses)[0]
+
+    return crossing_indices[0] if crossing_indices.size > 0 else -1
+
 def time_taken(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M):
     end_point = [0, 0]
     for fixed_pt in [hotfibrosis_mF_M, unstable_fixed_point_mF_M]:
