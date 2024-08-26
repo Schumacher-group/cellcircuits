@@ -17,4 +17,4 @@ beta3 = 240 * 60 * 24  #   max secretion rate of PDGF by mF in molecules/(cell *
 alpha1 = 940 *60 * 24  #   max endocytosis rate of CSF by M in molecules/(cell * day)
 alpha2 = 510 * 60 * 24 # max endocytosis rate of PDGF by mF in molecules/(cell * day)
 gamma = 2              # degradation rate of growth factors in 1/day
-A_0 = 10**6
+A_0 = 10**6            #             incoming injury signal in cells/day
