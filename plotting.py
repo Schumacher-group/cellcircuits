@@ -5,7 +5,7 @@ from scipy.integrate import odeint
 from parameters import *
 from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
-    cold_fibr, mF_M_rates_array, time_taken_rd, array_statistics)
+    cold_fibr, mF_M_rates_array, check_hot_fibrosis, time_taken_rd, array_statistics)
 from Signal_functions import Signal, adjusted_derivatives_with_signal
 from euler_maruyama_method import simulate_euler_maruyama, single_euler_maruyama_simulation
 
@@ -238,15 +238,13 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
     #The plus operator '+' concatenates usual Python arrays
     for trajectory, end_point in zip(trajectories, end_points):
-        interpolation = np.interp(end_point[0], separatrix_left_reverse[:, 0] + separatrix_right[:, 0],
-                                  separatrix_left_reverse[:, 1] + separatrix_right[:, 1])
-        if end_point[1] < interpolation:
-            healing_count += 1
-            ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.1, color = 'green')
-        else:
+        if check_hot_fibrosis(end_point, separatrix_left_reverse, separatrix_right):
             fibrosis_count += 1
             ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.1, color ='red')
             times_to_fibrosis.append(time_taken_rd(trajectory, t_trajectory, hotfibrosis_mF_M, unstable_fixed_point_mF_M))
+        else:
+            healing_count += 1
+            ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.1, color = 'green')
         
 
     print('Healing count', healing_count)
@@ -265,6 +263,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     plt.title(f'Fibrosis ratio {fibrosis_count/num_sim} (n = {num_sim})')
 
     plt.subplot(1, 2, 2)
+    
     #empty sequences like [] return false
     if not times_to_fibrosis:
         plt.title(f'No trajectories ended in fibrosis')
@@ -306,15 +305,11 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, durat
     fibrosis_count = 0
 
 
-    #left separatrix branch is build from right to left, so we need to revere the array
+    #left separatrix branch is build here from right to left (from unstable fixed point), so we need to reverse the array
     separatrix_left_reverse = separatrix_left[::-1]
 
-    #make an interpolation to check if the end point of trajectory lies in the basin of healing or fibrosis point
-    #The plus operation '+' concatenates usual Python arrays
     for end_point in end_points:
-        interpolation = np.interp(end_point[0], separatrix_left_reverse[:, 0] + separatrix_right[:, 0],
-                                  separatrix_left_reverse[:, 1] + separatrix_right[:, 1])
-        if end_point[1] > interpolation:
+        if check_hot_fibrosis(end_point, separatrix_left_reverse, separatrix_right):
             fibrosis_count += 1
 
     return fibrosis_count/num_sim        
