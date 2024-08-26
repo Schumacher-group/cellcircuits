@@ -200,7 +200,7 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, a
     plt.ylabel("Time (days)")
     plt.scatter(amplitudes, crossing_times, color = 'blue')
     plt.plot(amplitudes, crossing_times, color = 'red')
-    print(f'Amplitudes {amplitudes} (cells/day) \nTime to crossing separatrix {crossing_times} (days)')
+    print(f'Amplitudes {amplitudes:.2E} (cells/day) \nTime to crossing separatrix {crossing_times} (days)')
 
 
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, signal: Signal, num_sim):
@@ -377,7 +377,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point, dur
     _, ax = plt.subplots()
 
     ax.set_xlabel("std")
-    ax.set_title(f'Fibrosis ratio for n = {num_sim}')
+    ax.set_title(f'Fibrosis ratio (n = {num_sim})')
     ax.set_ylim([0,1])
 
     ax.plot(standard_deviations/A_0, fibrosis_counts)
