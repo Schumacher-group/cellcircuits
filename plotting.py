@@ -98,8 +98,8 @@ def plot_streamlines(mFM_space, t, t_separatrix):
     ax2.plot(fixed_point_end_of_separatrix[0], fixed_point_end_of_separatrix[1], marker = 'o', color = 'black')
 
 
-
-def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
+#if create_plots is set to False the function only returns the fibrosis status
+def signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal, create_plots = True):
     signal_function = signal.signal_function
     signal_derivative = adjusted_derivatives_with_signal(signal_function)
     endpoint_of_signal = signal.endpoint_of_signal()
@@ -109,16 +109,32 @@ def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
 
     separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
 
+    x_initial = [1, 1] #mF, M
+    
+    x = odeint(signal_derivative, x_initial, t)
+
+    if not create_plots:
+        end_point = x[-1]
+        separatrix_left_reverse = separatrix_left[::-1]
+        if check_hot_fibrosis(end_point, separatrix_left_reverse, separatrix_right):
+            return True
+        else:
+            False
+
+
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.subplots_adjust(hspace= 0.5)
 
     # setting up injury plots
-    ax1.set_xlim(0,10)
-    ax1.set_ylim(0,10)
-    ax1.set_aspect('equal')
+    ax1.set_xlim(0,endpoint_of_signal + 1)
+    ax1.set_ylim(-2,5)
+    #ax1.set_aspect('equal')
     ax1.set_xlabel('time (days)')
     ax1.set_ylabel('I(t)')
-    ax1.set_yticks([1],['A0'.translate(SUB)])
+    y_ticks = np.arange(-2, 5)
+    y_tick_labels = [f'{i}*$A_0$'if i != 0 else '0' for i in y_ticks]
+    ax1.set_yticks(y_ticks)
+    ax1.set_yticklabels(y_tick_labels)
 
     ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
     ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
@@ -136,10 +152,6 @@ def plot_signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal):
     ax2.set_xlabel('myofibroblasts')
     ax2.set_ylabel('macrophages')
 
-
-    x_initial = [1, 1] #mF, M
-    
-    x = odeint(signal_derivative, x_initial, t)
 
     
     t_signal = np.linspace(0, endpoint_of_signal + 1, 1000)
