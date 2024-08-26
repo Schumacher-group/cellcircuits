@@ -196,7 +196,7 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, a
         first_crossing_time = t[first_crossing_index]
         crossing_times = np.append(crossing_times, first_crossing_time)
 
-    plt.xlabel("Amplituedes (cell/day)")
+    plt.xlabel("Amplitudes (cell/day)")
     plt.ylabel("Time (days)")
     plt.scatter(amplitudes, crossing_times, color = 'blue')
     plt.plot(amplitudes, crossing_times, color = 'red')
