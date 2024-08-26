@@ -182,7 +182,6 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, a
 
     x_initial = [1, 1] #mF, M
     t_end = t[-1]
-    dt = (t_end - t[0])/len(t)
 
     for amplitude in amplitudes:
         signal = Signal(durations = [t_end], amplitudes = [amplitude])
@@ -194,13 +193,14 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, a
 
         #find crossing index and append the corresponding time value
         first_crossing_index = find_first_crossing_index(x, separatrix_interp)
-        first_crossing_time = dt * first_crossing_index
+        first_crossing_time = t[first_crossing_index]
         crossing_times = np.append(crossing_times, first_crossing_time)
 
-    plt.xlabel("Time (days)")
-    plt.ylabel("Amplitude")
-    #plt.scatter(crossing_times,amplitudes)
-    plt.scatter(first_crossing_time, x[first_crossing_index,1])
+    plt.xlabel("Amplituedes (cell/day)")
+    plt.ylabel("Time (days)")
+    plt.scatter(amplitudes, crossing_times, color = 'blue')
+    plt.plot(amplitudes, crossing_times, color = 'red')
+    print(f'Amplitudes {amplitudes} (cells/day) \nTime to crossing separatrix {crossing_times} (days)')
 
 
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, signal: Signal, num_sim):
