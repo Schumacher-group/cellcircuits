@@ -179,7 +179,7 @@ def cold_fibr():
 def check_hot_fibrosis(end_point, separatrix_left, separatrix_right):
     interpolation = np.interp(end_point[0], np.concatenate( (separatrix_left[:, 0], separatrix_right[:, 0]) ),
                               np.concatenate( (separatrix_left[:, 1], separatrix_right[:, 1]) ))
-    if end_point[1] < interpolation:
+    if end_point[1] > interpolation:
         return True
     else: False
 
