@@ -2,10 +2,11 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.integrate import odeint
+from scipy.interpolate import CubicSpline
 from parameters import *
 from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
-    cold_fibr, mF_M_rates_array, check_hot_fibrosis, time_taken_rd, array_statistics)
+    cold_fibr, mF_M_rates_array, check_hot_fibrosis, find_first_crossing_index, time_taken_rd, array_statistics)
 from Signal_functions import Signal, adjusted_derivatives_with_signal
 from euler_maruyama_method import simulate_euler_maruyama, single_euler_maruyama_simulation
 
@@ -162,6 +163,44 @@ def signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal, create_
     ax2.yaxis.set_label_position("right")
     ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
+
+def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, amplitudes):
+    crossing_times = np.array([])
+    
+    unstable_fixed_point_mF_M, _ = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
+
+    separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
+    separatrix_left_reverse = separatrix_left[::-1]
+
+    separatrix = np.concatenate( (separatrix_left_reverse, separatrix_right) )
+
+    #CubicSpline needs strictly increasing x-values, so we remove potential duplicates
+    separatrix_x_unique, indices = np.unique(separatrix[:, 0], return_index = True)
+    separatrix_y_unique = separatrix[indices, 1]
+
+    separatrix_interp = CubicSpline(separatrix_x_unique, separatrix_y_unique, extrapolate = True)
+
+    x_initial = [1, 1] #mF, M
+    t_end = t[-1]
+    dt = (t_end - t[0])/len(t)
+
+    for amplitude in amplitudes:
+        signal = Signal(durations = [t_end], amplitudes = [amplitude])
+    
+        signal_function = signal.signal_function
+        signal_derivative = adjusted_derivatives_with_signal(signal_function)
+        
+        x = odeint(signal_derivative, x_initial, t)
+
+        #find crossing index and append the corresponding time value
+        first_crossing_index = find_first_crossing_index(x, separatrix_interp)
+        first_crossing_time = dt * first_crossing_index
+        crossing_times = np.append(crossing_times, first_crossing_time)
+
+    plt.xlabel("Time (days)")
+    plt.ylabel("Amplitude")
+    #plt.scatter(crossing_times,amplitudes)
+    plt.scatter(first_crossing_time, x[first_crossing_index,1])
 
 
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, signal: Signal, num_sim):
