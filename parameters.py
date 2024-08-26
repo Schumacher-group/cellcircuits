@@ -11,13 +11,10 @@ k2 = 10 ** 9   # binding affinity of PDGF in molecules/ml
 
 
 # converted from paper to match units min -> day
-beta1 = 470 * 60 * 24  #   max secretion rate of CSF by mF in molecules/(cell * day) 
-beta2 = 70 * 60 * 24   #   max secretion rate of PDGF by M in molecules/(cell * day)
+beta1 = 470 * 60 * 24  #    max secretion rate of CSF by mF in molecules/(cell * day) 
+beta2 = 70 * 60 * 24   #    max secretion rate of PDGF by M in molecules/(cell * day)
 beta3 = 240 * 60 * 24  #   max secretion rate of PDGF by mF in molecules/(cell * day)
 alpha1 = 940 *60 * 24  #   max endocytosis rate of CSF by M in molecules/(cell * day)
 alpha2 = 510 * 60 * 24 # max endocytosis rate of PDGF by mF in molecules/(cell * day)
 gamma = 2              # degradation rate of growth factors in 1/day
 A_0 = 10**6
-
-
-SUB = str.maketrans("0123456789", "₀₁₂₃₄₅₆₇₈₉")
