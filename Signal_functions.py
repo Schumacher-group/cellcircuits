@@ -2,7 +2,11 @@
 from parameters import *
 from analysis import mF_M_rates
 
-
+'''
+Parameter units:
+Time: day
+Amplitude: cells/day
+'''
 class Signal:
     def __init__(self, name = 'Input Signal', start_points = [0], durations = [1], amplitudes = [1], standard_deviations = [0]):
         # convert all arrays to numpy arrays
