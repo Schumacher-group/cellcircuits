@@ -135,6 +135,10 @@ def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, s
     ax1.set_yticks(y_ticks)
     ax1.set_yticklabels(y_tick_labels)
 
+    '''
+    For visualization of the behaviour on the x/y_axis one can change the 'log' to symlog for the x and yscale, add linthresh
+    and change the lower x/y_lim to 0
+    '''
     ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
     ax2.plot(separatrix_right[:, 0], separatrix_right[:, 1], 'black')
     ax2.set_xscale('log')
