@@ -7,8 +7,8 @@ from parameters import *
 
 
 def main():
-    #time vector 
-    t = np.linspace(0, 100, 1000)
+    #time vectors 
+    t_trajectory = np.linspace(0, 100, 2001)
     t_separatrix = np.linspace(0, 800, 1000)
 
 
@@ -27,10 +27,10 @@ def main():
 
     #plotting.plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix = t_separatrix)
 
-    #plotting.plot_streamlines(mFM_space, t, t_separatrix)
+    #plotting.plot_streamlines(mFM_space, t_trajectory, t_separatrix)
 
-    amplitudes = [i*A_0 for i in np.arange(0.1, 4, 0.1)]
-    plotting.amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, amplitudes)
+    amplitudes = [i*A_0 for i in np.arange(1, 4, 0.1)]
+    #plotting.amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_separatrix, amplitudes)
 
 
     transient_signal = Signal(name = 'Transient signal', start_points = [0], durations = [2], amplitudes = [1.2*A_0])
@@ -40,15 +40,15 @@ def main():
     
     #Use different plot functions for determinstic and random signals as one implements the stochastic euler method
 
-    #plotting.signals_and_trajectories(mFM_space, t, t_separatrix, signal = transient_signal)
+    #plotting.signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, signal = transient_signal)
 
-    num_sim = 10
-    #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
+    num_sim = 1000
+    #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
 
 
     standard_deviations = [i*A_0 for i in np.arange(0, 5, 0.5)]
 
-    plotting.plot_fibrosis_ratios(mFM_space, t, t_separatrix, start_point = 0, duration = 2, amplitude = A_0,
+    plotting.plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point = 0, duration = 2, amplitude = A_0,
                                   standard_deviations = standard_deviations, num_sim = num_sim,)
     
     #Depict the plots

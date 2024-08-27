@@ -100,7 +100,7 @@ def plot_streamlines(mFM_space, t, t_separatrix):
 
 
 #if create_plots is set to False the function only returns the fibrosis status
-def signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal, create_plots = True):
+def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, signal: Signal, create_plots = True):
     signal_function = signal.signal_function
     signal_derivative = adjusted_derivatives_with_signal(signal_function)
     endpoint_of_signal = signal.endpoint_of_signal()
@@ -112,7 +112,7 @@ def signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal, create_
 
     x_initial = [1, 1] #mF, M
     
-    x = odeint(signal_derivative, x_initial, t)
+    x = odeint(signal_derivative, x_initial, t_trajectory)
 
     if not create_plots:
         end_point = x[-1]
@@ -161,10 +161,10 @@ def signals_and_trajectories(mFM_space, t, t_separatrix, signal: Signal, create_
 
     ax2.plot(x[:,0], x[:,1], 'red')
     ax2.yaxis.set_label_position("right")
-    ax2.set_title("time taken: " + str(time_taken_rd(x, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
+    ax2.set_title("time taken: " + str(time_taken_rd(x, t_trajectory, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
 
-def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, amplitudes):
+def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_separatrix, amplitudes):
     crossing_times = np.array([])
     
     unstable_fixed_point_mF_M, _ = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
@@ -181,7 +181,7 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, a
     separatrix_interp = CubicSpline(separatrix_x_unique, separatrix_y_unique, extrapolate = True)
 
     x_initial = [1, 1] #mF, M
-    t_end = t[-1]
+    t_end = t_trajectory[-1]
 
     for amplitude in amplitudes:
         signal = Signal(durations = [t_end], amplitudes = [amplitude])
@@ -189,11 +189,11 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t, t_separatrix, a
         signal_function = signal.signal_function
         signal_derivative = adjusted_derivatives_with_signal(signal_function)
         
-        x = odeint(signal_derivative, x_initial, t)
+        x = odeint(signal_derivative, x_initial, t_trajectory)
 
         #find crossing index and append the corresponding time value
         first_crossing_index = find_first_crossing_index(x, separatrix_interp)
-        first_crossing_time = t[first_crossing_index]
+        first_crossing_time = t_trajectory[first_crossing_index]
         crossing_times = np.append(crossing_times, first_crossing_time)
 
     plt.xlabel("Amplitudes (cell/day)")
@@ -377,7 +377,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point, dur
 
     _, ax = plt.subplots()
 
-    ax.set_xlabel("std")
+    ax.set_xlabel("std in $A_0$")
     ax.set_title(f'Fibrosis ratio (n = {num_sim})')
     ax.set_ylim([0,1])
 
