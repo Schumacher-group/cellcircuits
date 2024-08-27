@@ -233,7 +233,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
 
     t_signal = np.linspace(0, endpoint_of_signal + 1, 100)
     ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'deterministic signal', linestyle = '--')
-    ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'orange', label = 'noisy signal')
+    ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'orange', label = 'Noise')
     ax1.set_title(f'{signal.name} (Reprasentation) \nstd = {signal.standard_deviations}')
     ax1.legend()
 
