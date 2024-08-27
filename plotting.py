@@ -277,6 +277,10 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax2.set_ylabel('macrophages')
     ax2.yaxis.set_label_position("right")
 
+    #deterministic trajectory
+    x = odeint(deterministic_derivative, x_initial, t_trajectory)
+    ax2.plot(x[:,0], x[:,1], color = 'purple', label = 'Deterministic trajectory', linewidth = 1.5)
+
 
     healing_count = 0
     fibrosis_count = 0
@@ -296,7 +300,8 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
         else:
             healing_count += 1
             ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.1, color = 'green')
-        
+    
+    plt.legend()    
 
     print('Healing count', healing_count)
     print('Fibrosis count', fibrosis_count)
