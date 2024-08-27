@@ -169,13 +169,14 @@ def cold_fibr():
     # rearranged from eqns in transparent methods
     coldPDGF = np.roots(PDGF_coeff)
     coldmF = []
-    print("\n Roots of PDGF:", coldPDGF,"\n")
+    #print("\n Roots of PDGF:", coldPDGF,"\n")
     for coldroot in coldPDGF:
         if np.isreal(coldroot) and coldroot >= 0:
             coldmF.append(K * ((lambda1 - mu1) / (lambda1) - (mu1 * k1) / (lambda1 * np.real(coldroot)))) # finds mF value given PDGF value
-    print("\n coldmF:", coldmF,"\n")
+    #print("\n coldmF:", coldmF,"\n")
     return coldmF
 
+#Returns true if trajectory crosses seperatrix and will then move to the hot fibrosis state
 def check_hot_fibrosis(end_point, separatrix_left, separatrix_right):
     interpolation = np.interp(end_point[0], np.concatenate( (separatrix_left[:, 0], separatrix_right[:, 0]) ),
                               np.concatenate( (separatrix_left[:, 1], separatrix_right[:, 1]) ))
