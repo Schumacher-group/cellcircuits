@@ -214,6 +214,9 @@ def time_taken(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M):
     for i in range(len(traj)):
         if ((traj[i][0]) ** 2 + (traj[i][1]) ** 2) < 1e-3:
             return t[i]
+        else:
+            print("\033[91mWarning: The calculated trajectory time is higher than calculated. Try to adjust the time intervall.\033[0m")
+            return t[-1]
 
 def time_taken_rd(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M): 
     return round(time_taken(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M), 2)
