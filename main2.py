@@ -11,6 +11,8 @@ def main():
     t_trajectory = np.linspace(0, 100, 2001)
     t_separatrix = np.linspace(0, 800, 1000)
 
+    #Initial mF and M concentration
+    x_initial = [1,1]
 
     #Nullcline parameters for plotting
     mFM_space = np.logspace(0, 7, 10**4)
@@ -30,25 +32,25 @@ def main():
     #plotting.plot_streamlines(mFM_space, t_trajectory, t_separatrix)
 
     amplitudes = [i*A_0 for i in np.arange(1, 4, 0.1)]
-    #plotting.amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_separatrix, amplitudes)
+    plotting.amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_separatrix, x_initial, amplitudes)
 
 
     transient_signal = Signal(name = 'Transient signal', start_points = [0], durations = [2], amplitudes = [1.2*A_0])
     repetitive_signal = Signal(name = 'Repetitive signal', start_points = [0,4], durations = [2,2], amplitudes = [A_0, A_0])
-    random_transient_signal = Signal(name = 'Random transient', start_points = [0], durations = [2], amplitudes = [A_0], standard_deviations = [A_0])
+    random_transient_signal = Signal(name = 'Random transient', start_points = [0], durations = [2], amplitudes = [0], standard_deviations = [A_0])
     combined_signal = transient_signal + repetitive_signal
     
     #Use different plot functions for determinstic and random signals as one implements the stochastic euler method
 
-    #plotting.signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, signal = transient_signal)
+    plotting.signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, signal = transient_signal)
 
     num_sim = 1000
-    #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, signal = random_transient_signal, num_sim = num_sim)
+    plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal = random_transient_signal, num_sim = num_sim)
 
 
     standard_deviations = [i*A_0 for i in np.arange(0, 5, 0.5)]
 
-    plotting.plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point = 0, duration = 2, amplitude = A_0,
+    plotting.plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point = 0, duration = 2, amplitude = A_0,
                                   standard_deviations = standard_deviations, num_sim = num_sim,)
     
     #Depict the plots

@@ -52,7 +52,7 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
     plt.legend()
 
 
-def plot_streamlines(mFM_space, t, t_separatrix):
+def plot_streamlines(mFM_space, t_trajectory, t_separatrix):
     fig = plt.figure()
     mF_mesh = np.linspace(0, 7, 30)
     M_mesh = np.linspace(0, 7, 30)
@@ -61,7 +61,7 @@ def plot_streamlines(mFM_space, t, t_separatrix):
     ax=fig.add_subplot(111, label="1")
     ax2=fig.add_subplot(111, label="2", frame_on=False)
 
-    mF_rate, M_rate = mF_M_rates_array(mF_stream, M_stream, t)
+    mF_rate, M_rate = mF_M_rates_array(mF_stream, M_stream, t_trajectory)
 
     #scale the rates to appropriate size
     mF_rate_scaled = mF_rate/(10**mF_stream)
@@ -100,7 +100,7 @@ def plot_streamlines(mFM_space, t, t_separatrix):
 
 
 #if create_plots is set to False the function only returns the fibrosis status
-def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, signal: Signal, create_plots = True):
+def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, create_plots = True):
     signal_function = signal.signal_function
     signal_derivative = adjusted_derivatives_with_signal(signal_function)
     endpoint_of_signal = signal.endpoint_of_signal()
@@ -109,8 +109,6 @@ def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, signal: Sign
     unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
     separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
-
-    x_initial = [1, 1] #mF, M
     
     x = odeint(signal_derivative, x_initial, t_trajectory)
 
@@ -164,7 +162,7 @@ def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, signal: Sign
     ax2.set_title("time taken: " + str(time_taken_rd(x, t_trajectory, hotfibrosis_mF_M, unstable_fixed_point_mF_M)) + " days")
 
 
-def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_separatrix, amplitudes):
+def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_separatrix, x_initial, amplitudes):
     crossing_times = np.array([])
     
     unstable_fixed_point_mF_M, _ = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
@@ -180,7 +178,6 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
 
     separatrix_interp = CubicSpline(separatrix_x_unique, separatrix_y_unique, extrapolate = True)
 
-    x_initial = [1, 1] #mF, M
     t_end = t_trajectory[-1]
 
     for amplitude in amplitudes:
@@ -204,7 +201,7 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     print(f'Amplitudes {amplitudes} (cells/day) \nTime to crossing separatrix {crossing_times} (days)')
 
 
-def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, signal: Signal, num_sim):
+def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim):
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
     noise_function = signal.noise_function
@@ -240,8 +237,6 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     '''
     Using Euler-Maruyama method to solve the stochastic differential equation
     '''
-    x0 = [1,1] #initial mF and M point
-
     #non parallelized version of the Euler-Maruyama method
     #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
 
@@ -249,7 +244,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     #Parallelized version for Euler Maruyama method
     def run_parallel_simulation(num):
         return single_euler_maruyama_simulation(deterministic_derivative, noise_function,
-                                                t_trajectory, x0)
+                                                t_trajectory, x_initial)
     
     #-1 means we use all cores on our device
     results = Parallel(n_jobs = -1)(delayed(run_parallel_simulation)(num) for num in range(num_sim))
@@ -331,7 +326,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
 
 
 
-def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, duration, amplitude, standard_deviation, num_sim):
+def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviation, num_sim):
     signal = Signal(start_points= [start_point], durations= [duration], amplitudes = [amplitude], standard_deviations= [standard_deviation])
 
     signal_function = signal.signal_function
@@ -342,12 +337,10 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, durat
 
     separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
 
-    x0 = [1, 1] #mF and M
-
     #Parallelized version for Euler Maruyama method
     def run_parallel_simulation(num):
         return single_euler_maruyama_simulation(deterministic_derivative, noise_function,
-                                                t_trajectory, x0)
+                                                t_trajectory, x_initial)
     
     #-1 means we use all cores on our device
     results = Parallel(n_jobs = -1)(delayed(run_parallel_simulation)(num) for num in range(num_sim))
@@ -366,13 +359,13 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, start_point, durat
 
     return fibrosis_count/num_sim        
 
-def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, start_point, duration, amplitude, standard_deviations, num_sim):
+def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviations, num_sim):
     standard_deviations = np.array(standard_deviations)
     fibrosis_counts = np.array([])
     
     for standard_deviation in standard_deviations:
         fibrosis_counts = np.append(fibrosis_counts, 
-                                    get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix,
+                                    get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
                                                        start_point, duration, amplitude, standard_deviation, num_sim))
 
     _, ax = plt.subplots()
