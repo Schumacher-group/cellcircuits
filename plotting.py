@@ -61,7 +61,7 @@ def plot_streamlines(mFM_space, t_trajectory, t_separatrix):
     ax=fig.add_subplot(111, label="1")
     ax2=fig.add_subplot(111, label="2", frame_on=False)
 
-    mF_rate, M_rate = mF_M_rates_array(mF_stream, M_stream, t_trajectory)
+    mF_rate, M_rate = mF_M_rates_array(mF_stream, M_stream)
 
     #scale the rates to appropriate size
     mF_rate_scaled = mF_rate/(10**mF_stream)
