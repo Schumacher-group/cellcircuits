@@ -52,7 +52,7 @@ def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3
     plt.legend()
 
 
-def plot_streamlines(mFM_space, t_trajectory, t_separatrix):
+def plot_streamlines(mFM_space, t_separatrix):
     fig = plt.figure()
     mF_mesh = np.linspace(0, 7, 30)
     M_mesh = np.linspace(0, 7, 30)
