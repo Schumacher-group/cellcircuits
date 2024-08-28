@@ -167,6 +167,7 @@ def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, s
 
 
 def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_separatrix, x_initial, amplitudes):
+    plt.figure()
     crossing_times = np.array([])
     
     unstable_fixed_point_mF_M, _ = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
