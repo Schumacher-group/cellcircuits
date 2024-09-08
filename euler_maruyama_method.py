@@ -16,6 +16,7 @@ def euler_maruyama(deterministic_derivative, noise_function ,t_steps, x0, dt, sq
 
     for k in range(1, t_steps.size):
         deterministic_term = np.array(deterministic_derivative(x[k-1], t_steps[k-1]))
+        #noise affects only the macrophages influx (second entry)
         x[k] = x[k-1] + dt * deterministic_term + sqrt_dt * np.array([0, noise_terms[k-1]])
     
     return x[-1], x
