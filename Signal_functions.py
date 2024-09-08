@@ -62,7 +62,7 @@ class Signal:
         return total_signal
 
     #Simple noise with mean 0 and a std
-    def noise_signal(self, start, duration, std, t):
+    def gaussian_signal(self, start, duration, std, t):
         is_scalar = np.isscalar(t)
         t = np.array(t)
         noise = std * np.random.normal(0, 1, t.size) * (self.theta(t - start) - self.theta(t - (start + duration)))
@@ -72,10 +72,10 @@ class Signal:
         return noise
     
     #Overlay all noise functions
-    def noise_function(self, t):
+    def gaussian_function(self, t):
         total_noise = np.zeros_like(t)
         for start, duration, std in zip(self.start_points, self.durations, self.standard_deviations):
-            total_noise += self.noise_signal(start, duration, std, t)
+            total_noise += self.gaussian_signal(start, duration, std, t)
         return total_noise 
 
 

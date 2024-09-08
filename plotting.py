@@ -209,7 +209,7 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim):
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
-    noise_function = signal.noise_function
+    noise_function = signal.gaussian_function
     endpoint_of_signal = signal.endpoint_of_signal()
     
     coldfibrosis_mF_M = [cold_fibr()[0], 1]
@@ -341,7 +341,7 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_p
 
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
-    noise_function = signal.noise_function
+    noise_function = signal.gaussian_function
     
     unstable_fixed_point_mF_M, _ = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
