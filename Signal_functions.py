@@ -8,7 +8,7 @@ Time: day
 Amplitude: cells/day
 '''
 class Signal:
-    def __init__(self, name = 'Input Signal', start_points = [0], durations = [1], amplitudes = [1], standard_deviations = [0]):
+    def __init__(self, name = 'Input Signal', start_points = [0], durations = [1], amplitudes = [1], means = [0], standard_deviations = [0]):
         # convert all arrays to numpy arrays
         self.name = name
         self.start_points = np.array(start_points)
@@ -21,6 +21,11 @@ class Signal:
         else:
             self.standard_deviations = np.array(standard_deviations)
 
+        if isinstance(means, list) and means == [0]:
+            self.means = np.zeros_like(amplitudes)
+        else:
+            self.means = np.array(means)
+
     def __repr__(self):
         return f'{self.name}'
     
@@ -31,6 +36,7 @@ class Signal:
                 start_points = np.concatenate((self.start_points, other.start_points)),
                 durations = np.concatenate((self.durations, other.durations)),
                 amplitudes = np.concatenate((self.amplitudes, other.amplitudes)),
+                means = np.concatenate((self.means, other.means)),
                 standard_deviations = np.concatenate((self.standard_deviations, other.standard_deviations))
                 )
         else:
@@ -62,10 +68,10 @@ class Signal:
         return total_signal
 
     #Simple noise with mean 0 and a std
-    def gaussian_signal(self, start, duration, std, t):
+    def gaussian_signal(self, start, duration, mean, std, t):
         is_scalar = np.isscalar(t)
         t = np.array(t)
-        noise = std * np.random.normal(0, 1, t.size) * (self.theta(t - start) - self.theta(t - (start + duration)))
+        noise = (mean + std * np.random.normal(0, 1, t.size)) * (self.theta(t - start) - self.theta(t - (start + duration)))
 
         if is_scalar:
             return noise.item()
@@ -74,8 +80,8 @@ class Signal:
     #Overlay all noise functions
     def gaussian_function(self, t):
         total_noise = np.zeros_like(t)
-        for start, duration, std in zip(self.start_points, self.durations, self.standard_deviations):
-            total_noise += self.gaussian_signal(start, duration, std, t)
+        for start, duration, mean, std in zip(self.start_points, self.durations,self.means, self.standard_deviations):
+            total_noise += self.gaussian_signal(start, duration, mean, std, t)
         return total_noise 
 
 
