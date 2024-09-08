@@ -206,7 +206,7 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     print(f'Amplitudes {amplitudes} (cells/day) \nTime to crossing separatrix {crossing_times} (days)')
 
 
-def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim):
+def plot_gaussian_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim):
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
     noise_function = signal.gaussian_function
@@ -336,7 +336,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
 
 
 
-def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviation, num_sim):
+def get_gaussian_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviation, num_sim):
     signal = Signal(start_points= [start_point], durations= [duration], amplitudes = [amplitude], standard_deviations= [standard_deviation])
 
     signal_function = signal.signal_function
@@ -369,13 +369,13 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_p
 
     return fibrosis_count/num_sim        
 
-def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviations, num_sim):
+def plot_gaussian_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviations, num_sim):
     standard_deviations = np.array(standard_deviations)
     fibrosis_counts = np.array([])
     
     for standard_deviation in standard_deviations:
         fibrosis_counts = np.append(fibrosis_counts, 
-                                    get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
+                                    get_gaussian_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
                                                        start_point, duration, amplitude, standard_deviation, num_sim))
 
     _, ax = plt.subplots()
