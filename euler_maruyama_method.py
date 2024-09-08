@@ -21,6 +21,7 @@ def euler_maruyama(deterministic_derivative, noise_function ,t_steps, x0, dt, sq
     
     return x[-1], x
 
+#only used for non-parallelized version
 def simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim, axis):
     t0 = t_trajectory[0]
     dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
