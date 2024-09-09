@@ -8,7 +8,7 @@ Time: day
 Amplitude: cells/day
 '''
 class Signal:
-    def __init__(self, name = 'Input Signal', start_points = [0], durations = [1], amplitudes = [1], means = [0], standard_deviations = [0]):
+    def __init__(self, name = 'Input Signal', start_points = [0], durations = [1], amplitudes = [1], means = [0], standard_deviations = [0], lams = [0]):
         # convert all arrays to numpy arrays
         self.name = name
         self.start_points = np.array(start_points)
@@ -16,15 +16,20 @@ class Signal:
         self.amplitudes = np.array(amplitudes)
 
         #for default value create a zero std array to enable proper addition of signals
+        if isinstance(means, list) and means == [0]:
+            self.means = np.zeros_like(amplitudes)
+        else:
+            self.means = np.array(means)
+        
         if isinstance(standard_deviations, list) and standard_deviations == [0]:
             self.standard_deviations = np.zeros_like(amplitudes)
         else:
             self.standard_deviations = np.array(standard_deviations)
 
-        if isinstance(means, list) and means == [0]:
-            self.means = np.zeros_like(amplitudes)
+        if isinstance(lams, list) and lams == [0]:
+            self.lams = np.zeros_like(amplitudes)
         else:
-            self.means = np.array(means)
+            self.lams = np.array(lams)
 
     def __repr__(self):
         return f'{self.name}'
@@ -80,9 +85,24 @@ class Signal:
     #Overlay all noise functions
     def gaussian_function(self, t):
         total_noise = np.zeros_like(t)
-        for start, duration, mean, std in zip(self.start_points, self.durations,self.means, self.standard_deviations):
+        for start, duration, mean, std in zip(self.start_points, self.durations, self.means, self.standard_deviations):
             total_noise += self.gaussian_signal(start, duration, mean, std, t)
-        return total_noise 
+        return total_noise
+    
+    def poisson_signal(self, start, duration, lam, t):
+        is_scalar = np.isscalar(t)
+        t = np.array(t)
+        noise = np.random.poisson(lam, t.size) * (self.theta(t - start) - self.theta(t - (start + duration)))
+        
+        if is_scalar:
+            return noise.item()
+        return noise
+    
+    def poisson_function(self, t):
+        total_noise = np.zeros_like(t)
+        for start, duration, lam in zip(self.start_points, self.durations, self.lams):
+            total_noise += self.poisson_signal(start, duration, lam, t)
+        return total_noise
 
 
 
