@@ -8,28 +8,24 @@ Time: day
 Amplitude: cells/day
 '''
 class Signal:
-    def __init__(self, name = 'Input Signal', start_points = [0], durations = [1], amplitudes = [1], means = [0], standard_deviations = [0], lams = [0]):
+    def __init__(self, name = 'Input Signal', start_points = [0], durations = [1], amplitudes = [1],
+                normal_standard_deviations = [0], poisson_lams = [0]):
         # convert all arrays to numpy arrays
         self.name = name
         self.start_points = np.array(start_points)
         self.durations = np.array(durations)
         self.amplitudes = np.array(amplitudes)
 
-        #for default value create a zero std array to enable proper addition of signals
-        if isinstance(means, list) and means == [0]:
-            self.means = np.zeros_like(amplitudes)
-        else:
-            self.means = np.array(means)
-        
-        if isinstance(standard_deviations, list) and standard_deviations == [0]:
+        #for default value create a zero std array to enable proper addition of signal
+        if isinstance(normal_standard_deviations, list) and normal_standard_deviations == [0]:
             self.standard_deviations = np.zeros_like(amplitudes)
         else:
-            self.standard_deviations = np.array(standard_deviations)
+            self.standard_deviations = np.array(normal_standard_deviations)
 
-        if isinstance(lams, list) and lams == [0]:
-            self.lams = np.zeros_like(amplitudes)
+        if isinstance(poisson_lams, list) and poisson_lams == [0]:
+            self.poisson_lams = np.zeros_like(amplitudes)
         else:
-            self.lams = np.array(lams)
+            self.poisson_lams = np.array(poisson_lams)
 
     def __repr__(self):
         return f'{self.name}'
@@ -41,8 +37,8 @@ class Signal:
                 start_points = np.concatenate((self.start_points, other.start_points)),
                 durations = np.concatenate((self.durations, other.durations)),
                 amplitudes = np.concatenate((self.amplitudes, other.amplitudes)),
-                means = np.concatenate((self.means, other.means)),
-                standard_deviations = np.concatenate((self.standard_deviations, other.standard_deviations))
+                normal_standard_deviations = np.concatenate((self.standard_deviations, other.standard_deviations)),
+                poisson_lams = np.concatenate((self.poisson_lams, other.poisson_lams))
                 )
         else:
             return NotImplemented
@@ -72,36 +68,36 @@ class Signal:
             total_signal += self.basic_signal(start, duration, amplitude, t)
         return total_signal
 
-    #Simple noise with mean 0 and a std
-    def gaussian_signal(self, start, duration, mean, std, t):
+    #Gaussian noise 
+    def gaussian_signal(self, start, duration, std, t, dt):
         is_scalar = np.isscalar(t)
         t = np.array(t)
-        noise = (mean + std * np.random.normal(0, 1, t.size)) * (self.theta(t - start) - self.theta(t - (start + duration)))
+        noise = (std * np.sqrt(dt) * np.random.normal(0, 1, t.size)) * (self.theta(t - start) - self.theta(t - (start + duration)))
 
         if is_scalar:
             return noise.item()
         return noise
     
-    #Overlay all noise functions
-    def gaussian_function(self, t):
+    #Overlay the noise functions
+    def gaussian_function(self, t, dt):
         total_noise = np.zeros_like(t)
-        for start, duration, mean, std in zip(self.start_points, self.durations, self.means, self.standard_deviations):
-            total_noise += self.gaussian_signal(start, duration, mean, std, t)
+        for start, duration, std in zip(self.start_points, self.durations, self.standard_deviations):
+            total_noise += self.gaussian_signal(start, duration, std, t, dt)
         return total_noise
     
-    def poisson_signal(self, start, duration, lam, t):
+    def poisson_signal(self, start, duration, lam, t, dt):
         is_scalar = np.isscalar(t)
         t = np.array(t)
-        noise = np.random.poisson(lam, t.size) * (self.theta(t - start) - self.theta(t - (start + duration)))
+        noise = np.random.poisson(dt*lam, t.size) * (self.theta(t - start) - self.theta(t - (start + duration)))
         
         if is_scalar:
             return noise.item()
         return noise
     
-    def poisson_function(self, t):
+    def poisson_function(self, t, dt):
         total_noise = np.zeros_like(t)
         for start, duration, lam in zip(self.start_points, self.durations, self.lams):
-            total_noise += self.poisson_signal(start, duration, lam, t)
+            total_noise += self.poisson_signal(start, duration, lam, t, dt)
         return total_noise
 
 
