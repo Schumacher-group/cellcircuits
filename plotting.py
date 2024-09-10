@@ -430,7 +430,8 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
             ax.legend(loc = 'upper left')
 
         _, ax2 = plt.subplots()
-        sns.heatmap(fibrosis_count_grid, xticklabels = gamma_betas, yticklabels = gamma_alphas, cmap = 'Reds', ax = ax2)
+        sns.heatmap(fibrosis_count_grid, xticklabels = gamma_betas, yticklabels = gamma_alphas,
+                    annot = True, fmt = '.1e', cmap = 'Reds', ax = ax2)
         ax2.set_title('Fibrosis count')
         ax2.set_xlabel('beta')
         ax2.set_ylabel('alpha')
