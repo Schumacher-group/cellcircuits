@@ -46,7 +46,7 @@ def main():
 
     #plotting.signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, signal = repetitive_signal)
 
-    noise_type = 'poisson'
+    noise_type = 'gamma'
 
     num_sim = 10
     #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal = random_transient_signal, num_sim = num_sim, noise_type=noise_type)
@@ -54,9 +54,12 @@ def main():
 
     standard_deviations = [i*A_0 for i in np.arange(0, 2, 1)]
     poisson_lams = [i*A_0 for i in np.arange(0,2, 1)]
+    gamma_alphas = [10**i for i in range(7)]
+    gamma_betas = [10**i for i in range(7)]
 
     plotting.plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point = 0, duration = 2, num_sim = num_sim, noise_type = noise_type,
-                                  amplitude = A_0, standard_deviations = standard_deviations, poisson_lams = poisson_lams)
+                                  amplitude = A_0, standard_deviations = standard_deviations, poisson_lams = poisson_lams, gamma_alphas = gamma_alphas,
+                                  gamma_betas = gamma_betas)
     
 
     #Depict the plots
