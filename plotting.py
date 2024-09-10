@@ -242,13 +242,19 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
         signal_representation = signal.poisson_noise_function(t_signal, 1)
         noise_function = signal.poisson_noise_function
         ax1.plot(t_signal, signal_function(t_signal)/A_0 + signal_representation/A_0, color = 'orange', label = 'Noise')
-        ax1.set_title(f'{noise_type} noise (Reprasentation) \nlambda = {signal.poisson_lams}')
+        ax1.set_title(f'{noise_type} noise (reprasentation) \nlambda = {signal.poisson_lams}')
+    elif noise_type == 'gamma':
+        #for plotting an example of the incoming noise
+        signal_representation = signal.gamma_noise_function(t_signal, 1)
+        noise_function = signal.gamma_noise_function
+        ax1.plot(t_signal, signal_function(t_signal)/A_0 + signal_representation/A_0, color = 'orange', label = 'Noise')
+        ax1.set_title(f'{noise_type} noise (representation) \nalpha = {signal.gamma_alphas},\nbeta = {signal.gamma_betas}')
     else:
         #for plotting an example for the incoming noise
         signal_representation = signal.gaussian_noise_function(t_signal, 1)
         noise_function = signal.gaussian_noise_function
         ax1.plot(t_signal, signal_function(t_signal)/A_0 + signal_representation/A_0, color = 'orange', label = 'Noise')
-        ax1.set_title(f'{signal.name} (Reprasentation) \nstd = {signal.standard_deviations}')
+        ax1.set_title(f'{noise_type} noise (reprasentation) \nstd = {signal.standard_deviations}')
 
     ax1.legend()
 
@@ -349,15 +355,18 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
 
 
 
-def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, num_sim, noise_type, amplitude = 0, standard_deviation = 0, lam = 0):
+def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, num_sim, noise_type, amplitude = 0, standard_deviation = 0,
+                       lam = 0, alpha = 0, beta = 0):
     signal = Signal(start_points= [start_point], durations= [duration], amplitudes = [amplitude], normal_standard_deviations= [standard_deviation],
-                    poisson_lams = [lam])
+                    poisson_lams = [lam], gamma_alphas = [alpha], gamma_betas = [beta])
 
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
     
     if noise_type == 'poisson':
         noise_function = signal.poisson_noise_function
+    elif noise_type == 'gamma':
+        noise_function = signal.gamma_noise_function
     else:
         noise_function = signal.gaussian_noise_function
     
@@ -388,7 +397,7 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_p
     return fibrosis_count/num_sim        
 
 def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, num_sim, noise_type, amplitude, standard_deviations = [0],
-                         poisson_lams = [0]):
+                         poisson_lams = [0], gamma_alphas = [0], gamma_betas = [0]):
     
     fibrosis_counts = np.array([])
     _, ax = plt.subplots()
@@ -404,6 +413,28 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
         ax.set_xlabel('lambda in $A_0')
         ax.plot(poisson_lams/A_0, fibrosis_counts)
         ax.scatter(poisson_lams/A_0, fibrosis_counts, color = 'red')
+    elif noise_type == 'gamma':
+        gamma_alphas = np.array(gamma_alphas)
+        gamma_betas = np.array(gamma_betas)
+        fibrosis_count_grid = np.zeros((len(gamma_alphas), len(gamma_betas))) 
+        for i, alpha in enumerate(gamma_alphas):
+            fibrosis_counts = np.array([])
+            for j, beta in enumerate(gamma_betas):
+                fibrosis_count = get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
+                                                    start_point, duration, num_sim, noise_type, amplitude, alpha = alpha, beta = beta)
+                fibrosis_counts = np.append(fibrosis_counts, fibrosis_count)
+                fibrosis_count_grid[i, j] = fibrosis_count
+            ax.set_xlabel('beta in $A_0')
+            ax.plot(gamma_betas, fibrosis_counts, label = f'alpha = {alpha}')
+            ax.scatter(gamma_betas, fibrosis_counts, color = 'red')
+            ax.legend(loc = 'upper left')
+
+        _, ax2 = plt.subplots()
+        sns.heatmap(fibrosis_count_grid, xticklabels = gamma_betas, yticklabels = gamma_alphas, cmap = 'YlGnBu', ax = ax2)
+        ax2.set_title('Fibrosis count')
+        ax2.set_xlabel('beta')
+        ax2.set_ylabel('alpha')
+
     else:
         standard_deviations = np.array(standard_deviations)
         for standard_deviation in standard_deviations:
