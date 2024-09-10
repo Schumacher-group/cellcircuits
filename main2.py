@@ -35,24 +35,30 @@ def main():
     #plotting.amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_separatrix, x_initial, amplitudes)
 
 
-    transient_signal = Signal(name = 'Transient signal', start_points = [0], durations = [2], amplitudes = [A_0])
+
+    transient_signal = Signal(name = 'Transient signal', start_points = [0], durations = [2], amplitudes = [0])
     repetitive_signal = Signal(name = 'Repetitive signal', start_points = [0,30], durations = [2,0.5], amplitudes = [A_0, 0.1*A_0])
-    random_transient_signal = Signal(name = 'Random transient', start_points = [0], durations = [2], amplitudes = [A_0], standard_deviations = [0.5*A_0])
+    random_transient_signal = Signal(name = 'Random transient', start_points = [0], durations = [2], amplitudes = [A_0],
+                                     normal_standard_deviations = [A_0], poisson_lams = [A_0])
     combined_signal = transient_signal + repetitive_signal
     
     #Use different plot functions for determinstic and random signals as one implements the stochastic euler method
 
     #plotting.signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, signal = repetitive_signal)
 
-    num_sim = 2
-    #plotting.plot_gaussian_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal = random_transient_signal, num_sim = num_sim)
+    noise_type = 'poisson'
+
+    num_sim = 10
+    #plotting.plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal = random_transient_signal, num_sim = num_sim, noise_type=noise_type)
 
 
-    standard_deviations = [i*A_0 for i in np.arange(0, 5, 0.5)]
+    standard_deviations = [i*A_0 for i in np.arange(0, 2, 1)]
+    poisson_lams = [i*A_0 for i in np.arange(0,2, 1)]
 
-    plotting.plot_gaussian_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point = 0, duration = 2, amplitude = A_0,
-                                  standard_deviations = standard_deviations, num_sim = num_sim,)
+    plotting.plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point = 0, duration = 2, num_sim = num_sim, noise_type = noise_type,
+                                  amplitude = A_0, standard_deviations = standard_deviations, poisson_lams = poisson_lams)
     
+
     #Depict the plots
     show()
 
