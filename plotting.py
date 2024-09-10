@@ -349,12 +349,17 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
 
 
 
-def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviation, num_sim):
-    signal = Signal(start_points= [start_point], durations= [duration], amplitudes = [amplitude], normal_standard_deviations= [standard_deviation])
+def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, num_sim, noise_type, amplitude = 0, standard_deviation = 0, lam = 0):
+    signal = Signal(start_points= [start_point], durations= [duration], amplitudes = [amplitude], normal_standard_deviations= [standard_deviation],
+                    poisson_lams = [lam])
 
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
-    noise_function = signal.gaussian_function
+    
+    if noise_type == 'poisson':
+        noise_function = signal.poisson_noise_function
+    else:
+        noise_function = signal.gaussian_noise_function
     
     unstable_fixed_point_mF_M, _ = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
@@ -382,20 +387,29 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_p
 
     return fibrosis_count/num_sim        
 
-def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviations, num_sim):
-    standard_deviations = np.array(standard_deviations)
-    fibrosis_counts = np.array([])
+def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, num_sim, noise_type, amplitude, standard_deviations = [0],
+                         poisson_lams = [0]):
     
-    for standard_deviation in standard_deviations:
-        fibrosis_counts = np.append(fibrosis_counts, 
-                                    get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
-                                                       start_point, duration, amplitude, standard_deviation, num_sim))
-
+    fibrosis_counts = np.array([])
     _, ax = plt.subplots()
-
-    ax.set_xlabel("std in $A_0$")
     ax.set_title(f'Fibrosis ratio (n = {num_sim})')
     ax.set_ylim([0,1])
 
-    ax.plot(standard_deviations/A_0, fibrosis_counts)
-    ax.scatter(standard_deviations/A_0, fibrosis_counts,color = 'red')
+    if noise_type == 'poisson':
+        poisson_lams = np.array(poisson_lams)
+        for lam in poisson_lams:
+            fibrosis_counts = np.append(fibrosis_counts, 
+                                        get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
+                                                           start_point, duration, num_sim, noise_type, amplitude, lam = lam))
+        ax.set_xlabel('lambda in $A_0')
+        ax.plot(poisson_lams/A_0, fibrosis_counts)
+        ax.scatter(poisson_lams/A_0, fibrosis_counts, color = 'red')
+    else:
+        standard_deviations = np.array(standard_deviations)
+        for standard_deviation in standard_deviations:
+            fibrosis_counts = np.append(fibrosis_counts, 
+                                        get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
+                                                        start_point, duration, num_sim, noise_type, amplitude, standard_deviation = standard_deviation))
+        ax.set_xlabel('std in $A_0')
+        ax.plot(standard_deviations/A_0, fibrosis_counts)
+        ax.scatter(standard_deviations/A_0, fibrosis_counts,color = 'red')
