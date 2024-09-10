@@ -79,7 +79,7 @@ class Signal:
         return noise
     
     #Overlay the noise functions
-    def gaussian_function(self, t, dt):
+    def gaussian_noise_function(self, t, dt):
         total_noise = np.zeros_like(t)
         for start, duration, std in zip(self.start_points, self.durations, self.standard_deviations):
             total_noise += self.gaussian_signal(start, duration, std, t, dt)
@@ -94,9 +94,9 @@ class Signal:
             return noise.item()
         return noise
     
-    def poisson_function(self, t, dt):
+    def poisson_noise_function(self, t, dt):
         total_noise = np.zeros_like(t)
-        for start, duration, lam in zip(self.start_points, self.durations, self.lams):
+        for start, duration, lam in zip(self.start_points, self.durations, self.poisson_lams):
             total_noise += self.poisson_signal(start, duration, lam, t, dt)
         return total_noise
 
