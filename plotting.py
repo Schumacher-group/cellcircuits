@@ -206,12 +206,12 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     print(f'Amplitudes {amplitudes} (cells/day) \nTime to crossing separatrix {crossing_times} (days)')
 
 
-def plot_gaussian_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim):
+def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim, noise_type = 'gaussian'):
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
-    noise_function = signal.gaussian_function
     endpoint_of_signal = signal.endpoint_of_signal()
-    
+
+
     coldfibrosis_mF_M = [cold_fibr()[0], 1]
     unstable_fixed_point_mF_M, hotfibrosis_mF_M = unstable_fixed_point_hotfibrosis_mF_M(mFM_space)
 
@@ -235,8 +235,21 @@ def plot_gaussian_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_se
 
     t_signal = np.linspace(0, endpoint_of_signal + 1, 100)
     ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'deterministic signal', linestyle = '--')
-    ax1.plot(t_signal, signal_function(t_signal)/A_0 + noise_function(t_signal)/A_0, color = 'orange', label = 'Noise')
-    ax1.set_title(f'{signal.name} (Reprasentation) \nstd = {signal.standard_deviations}')
+    
+
+    if noise_type == 'poisson':
+        #for plotting an example for the incoming noise
+        signal_representation = signal.poisson_noise_function(t_signal, 1)
+        noise_function = signal.poisson_noise_function
+        ax1.plot(t_signal, signal_function(t_signal)/A_0 + signal_representation/A_0, color = 'orange', label = 'Noise')
+        ax1.set_title(f'{noise_type} noise (Reprasentation) \nlambda = {signal.poisson_lams}')
+    else:
+        #for plotting an example for the incoming noise
+        signal_representation = signal.gaussian_noise_function(t_signal, 1)
+        noise_function = signal.gaussian_noise_function
+        ax1.plot(t_signal, signal_function(t_signal)/A_0 + signal_representation/A_0, color = 'orange', label = 'Noise')
+        ax1.set_title(f'{signal.name} (Reprasentation) \nstd = {signal.standard_deviations}')
+
     ax1.legend()
 
     '''
@@ -302,7 +315,7 @@ def plot_gaussian_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_se
             healing_count += 1
             ax2.plot(trajectory[:, 0], trajectory[:, 1], alpha = 0.1, color = 'green')
     
-    plt.legend()    
+    ax2.legend(loc = 'lower right')    
 
     print('Healing count', healing_count)
     print('Fibrosis count', fibrosis_count)
@@ -336,8 +349,8 @@ def plot_gaussian_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_se
 
 
 
-def get_gaussian_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviation, num_sim):
-    signal = Signal(start_points= [start_point], durations= [duration], amplitudes = [amplitude], standard_deviations= [standard_deviation])
+def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviation, num_sim):
+    signal = Signal(start_points= [start_point], durations= [duration], amplitudes = [amplitude], normal_standard_deviations= [standard_deviation])
 
     signal_function = signal.signal_function
     deterministic_derivative = adjusted_derivatives_with_signal(signal_function)
@@ -369,13 +382,13 @@ def get_gaussian_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial
 
     return fibrosis_count/num_sim        
 
-def plot_gaussian_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviations, num_sim):
+def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, standard_deviations, num_sim):
     standard_deviations = np.array(standard_deviations)
     fibrosis_counts = np.array([])
     
     for standard_deviation in standard_deviations:
         fibrosis_counts = np.append(fibrosis_counts, 
-                                    get_gaussian_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
+                                    get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
                                                        start_point, duration, amplitude, standard_deviation, num_sim))
 
     _, ax = plt.subplots()
