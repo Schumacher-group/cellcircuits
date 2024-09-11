@@ -207,9 +207,24 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     plt.yticks(np.arange(0, 9, 0.5))
     plt.grid(True)
     plt.plot(amplitudes, crossing_times, color = 'red')
-    amplitudes = [f"{amplitude:.2e}" for amplitude in amplitudes]
-    print(f'Amplitudes {amplitudes} (cells/day) \nTime until separatrix crossing {crossing_times} (days)')
 
+    plt.figure()
+    plt.axis('off')
+
+    amplitudes_scaled = [amp/A_0 for amp in amplitudes]
+    data = np.vstack([amplitudes_scaled, crossing_times]).T  # Stack x and y as two columns
+    table_data = [[f"{xi:.2f}", f"{yi:.2f}"] for xi, yi in data]  # Format values
+
+    # Add a table
+    table = plt.table(cellText=table_data,
+                    colLabels=["Amplitudes in 10^6 cell/day", "Time in days"],
+                    cellLoc="center",
+                    loc="center",  # Position table in the center
+                    )  
+
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1, 1) #width and height of table
 
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim, noise_type = 'gaussian'):
     signal_function = signal.signal_function
@@ -304,12 +319,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax2.yaxis.set_label_position("right")
 
     #deterministic trajectory
-    if noise_type == 'gamma':
-        signal.amplitudes = np.array(signal.gamma_alphas/signal.gamma_betas)
-        deterministic_derivative = adjusted_derivatives_with_signal(signal.signal_function)
-        x = odeint(deterministic_derivative, x_initial, t_trajectory)
-    else:
-        x = odeint(deterministic_derivative, x_initial, t_trajectory)
+    x = odeint(deterministic_derivative, x_initial, t_trajectory)
     ax2.plot(x[:,0], x[:,1], color = 'purple', label = 'Deterministic trajectory', linewidth = 1.5)
 
 
