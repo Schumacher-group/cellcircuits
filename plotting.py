@@ -268,8 +268,8 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
         signal_representation = signal.gamma_noise_function(t_signal, 1)
         noise_function = signal.gamma_noise_function
         ax1.plot(t_signal, signal_function(t_signal)/A_0 + signal_representation/A_0, color = 'orange', label = 'Noise')
-        ax1.set_title(f'{noise_type.title()} noise (representation) \nmean = {np.round(signal.gamma_alphas/signal.gamma_betas, 3)}, \n'
-                      f'std = {np.round(np.sqrt(signal.gamma_alphas)/signal.gamma_betas,2)}')
+        ax1.set_title(f'{noise_type.title()} noise (representation) \nmean = {np.round(signal.gamma_alphas/signal.gamma_betas, 3)/A_0}E+6, \n'
+                      f'std = {np.round(np.sqrt(signal.gamma_alphas)/signal.gamma_betas,2)/A_0}E+6')
     else:
         #for plotting an example for the incoming noise
         signal_representation = signal.gaussian_noise_function(t_signal, 1)
@@ -319,8 +319,9 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax2.yaxis.set_label_position("right")
 
     #deterministic trajectory
-    x = odeint(deterministic_derivative, x_initial, t_trajectory)
-    ax2.plot(x[:,0], x[:,1], color = 'purple', label = 'Deterministic trajectory', linewidth = 1.5)
+    if noise_type == 'gaussian':
+        x = odeint(deterministic_derivative, x_initial, t_trajectory)
+        ax2.plot(x[:,0], x[:,1], color = 'purple', label = 'Deterministic trajectory', linewidth = 1.5)
 
 
     healing_count = 0
@@ -417,7 +418,7 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_p
 
     return fibrosis_count/num_sim        
 
-def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, num_sim, noise_type, amplitude, standard_deviations = [0],
+def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, amplitude, num_sim, noise_type, standard_deviations = [0],
                          poisson_lams = [0], gamma_means = [1], gamma_standard_deviations = [1]):
     
     fibrosis_counts = np.array([])
