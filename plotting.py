@@ -202,6 +202,10 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     plt.ylabel("Time (days)")
     plt.scatter(amplitudes, crossing_times, color = 'blue')
     plt.title("Time to reach fibrosis basin under constant injury signal")
+
+    plt.xticks(np.arange(0, 2*A_0, 0.1*A_0))
+    plt.yticks(np.arange(0, 9, 0.5))
+    plt.grid(True)
     plt.plot(amplitudes, crossing_times, color = 'red')
     amplitudes = [f"{amplitude:.2e}" for amplitude in amplitudes]
     print(f'Amplitudes {amplitudes} (cells/day) \nTime until separatrix crossing {crossing_times} (days)')
@@ -431,7 +435,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
                                                     start_point, duration, num_sim, noise_type, amplitude, alpha = alpha, beta = beta)
                 fibrosis_counts = np.append(fibrosis_counts, fibrosis_count)
                 fibrosis_count_grid[i, j] = fibrosis_count
-            ax.set_xlabel('std in $A_0')
+            ax.set_xlabel('std in $A_0$')
             ax.plot(gamma_standard_deviations_scaled, fibrosis_counts, label = f'mean = {mean/A_0}')
             ax.scatter(gamma_standard_deviations_scaled, fibrosis_counts, color = 'red')
             ax.legend(loc = 'upper right')
