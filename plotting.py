@@ -304,7 +304,12 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax2.yaxis.set_label_position("right")
 
     #deterministic trajectory
-    x = odeint(deterministic_derivative, x_initial, t_trajectory)
+    if noise_type == 'gamma':
+        signal.amplitudes = np.array(signal.gamma_alphas/signal.gamma_betas)
+        deterministic_derivative = adjusted_derivatives_with_signal(signal.signal_function)
+        x = odeint(deterministic_derivative, x_initial, t_trajectory)
+    else:
+        x = odeint(deterministic_derivative, x_initial, t_trajectory)
     ax2.plot(x[:,0], x[:,1], color = 'purple', label = 'Deterministic trajectory', linewidth = 1.5)
 
 
