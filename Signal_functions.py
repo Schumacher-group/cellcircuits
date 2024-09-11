@@ -17,22 +17,22 @@ class Signal:
         self.amplitudes = np.array(amplitudes)
 
         #for default value create a zero std array to enable proper addition of signal
-        if isinstance(normal_standard_deviations, list) and normal_standard_deviations == [0]:
+        if isinstance(normal_standard_deviations, list) and np.array_equal(normal_standard_deviations, [0]):
             self.standard_deviations = np.zeros_like(amplitudes)
         else:
             self.standard_deviations = np.array(normal_standard_deviations)
 
-        if isinstance(poisson_lams, list) and poisson_lams == [0]:
+        if isinstance(poisson_lams, list) and np.array_equal(poisson_lams, [0]):
             self.poisson_lams = np.zeros_like(amplitudes)
         else:
             self.poisson_lams = np.array(poisson_lams)
 
-        if isinstance(gamma_alphas, list) and gamma_alphas == [0]:
+        if isinstance(gamma_alphas, list) and np.array_equal(gamma_alphas, [0]):
             self.gamma_alphas = np.zeros_like(amplitudes)
         else:
             self.gamma_alphas = np.array(gamma_alphas)
 
-        if isinstance(gamma_betas, list) and gamma_betas == [0]:
+        if isinstance(gamma_betas, list) and np.array_equal(gamma_betas, [0]):
             self.gamma_betas = np.zeros_like(amplitudes)
         else:
             self.gamma_betas = np.array(gamma_betas)
