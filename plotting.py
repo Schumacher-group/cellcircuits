@@ -397,7 +397,7 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_p
     return fibrosis_count/num_sim        
 
 def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, num_sim, noise_type, amplitude, standard_deviations = [0],
-                         poisson_lams = [0], gamma_alphas = [0], gamma_betas = [0]):
+                         poisson_lams = [0], gamma_means = [1], gamma_variances = [1]):
     
     fibrosis_counts = np.array([])
     _, ax = plt.subplots()
@@ -414,8 +414,9 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
         ax.plot(poisson_lams/A_0, fibrosis_counts)
         ax.scatter(poisson_lams/A_0, fibrosis_counts, color = 'red')
     elif noise_type == 'gamma':
-        gamma_alphas = np.array(gamma_alphas)
-        gamma_betas = np.array(gamma_betas)
+        #transform means, variances to parameters for the gamma distribution which has mean = alpha/beta and sigma**2 = alpha/beta**2
+        gamma_alphas = np.array([mu**2/var for mu in gamma_means for var in gamma_variances])
+        gamma_betas = np.array([mu/var for mu in gamma_means for var in gamma_variances])
         fibrosis_count_grid = np.zeros((len(gamma_alphas), len(gamma_betas))) 
         for i, alpha in enumerate(gamma_alphas):
             fibrosis_counts = np.array([])
@@ -430,11 +431,11 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
             ax.legend(loc = 'upper left')
 
         _, ax2 = plt.subplots()
-        sns.heatmap(fibrosis_count_grid, xticklabels = gamma_betas, yticklabels = gamma_alphas,
+        sns.heatmap(fibrosis_count_grid, xticklabels = np.round(gamma_betas, 4), yticklabels = np.round(gamma_alphas/A_0, 2),
                     annot = True, cmap = 'Reds', ax = ax2)
-        ax2.set_title(f'Fibrosis count (n = {num_sim})')
+        ax2.set_title(f'Fibrosis ratio (n = {num_sim})')
         ax2.set_xlabel('beta')
-        ax2.set_ylabel('alpha')
+        ax2.set_ylabel('alpha in $A_0$')
 
     else:
         standard_deviations = np.array(standard_deviations)
