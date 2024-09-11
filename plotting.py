@@ -234,7 +234,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax1.set_yticklabels(y_tick_labels)
 
     t_signal = np.linspace(0, endpoint_of_signal + 1, 100)
-    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'deterministic signal', linestyle = '--')
+    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'Deterministic signal', linestyle = '--')
     
 
     if noise_type == 'poisson':
@@ -242,13 +242,14 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
         signal_representation = signal.poisson_noise_function(t_signal, 1)
         noise_function = signal.poisson_noise_function
         ax1.plot(t_signal, signal_function(t_signal)/A_0 + signal_representation/A_0, color = 'orange', label = 'Noise')
-        ax1.set_title(f'{noise_type} noise (reprasentation) \nlambda = {signal.poisson_lams}')
+        ax1.set_title(f'{noise_type} noise (representation) \nlambda = {signal.poisson_lams}')
     elif noise_type == 'gamma':
         #for plotting an example of the incoming noise
         signal_representation = signal.gamma_noise_function(t_signal, 1)
         noise_function = signal.gamma_noise_function
         ax1.plot(t_signal, signal_function(t_signal)/A_0 + signal_representation/A_0, color = 'orange', label = 'Noise')
-        ax1.set_title(f'{noise_type} noise (representation) \nalpha = {signal.gamma_alphas},\nbeta = {signal.gamma_betas}')
+        ax1.set_title(f'{noise_type.title()} noise (representation) \nmean = {np.round(signal.gamma_alphas/signal.gamma_betas, 3)}, \n'
+                      f'std = {np.round(np.sqrt(signal.gamma_alphas)/signal.gamma_betas,2)}')
     else:
         #for plotting an example for the incoming noise
         signal_representation = signal.gaussian_noise_function(t_signal, 1)
