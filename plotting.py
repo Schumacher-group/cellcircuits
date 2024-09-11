@@ -407,7 +407,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
     
     fibrosis_counts = np.array([])
     _, ax = plt.subplots()
-    ax.set_title(f'Fibrosis ratio (n = {num_sim})')
+    ax.set_title(f'Fibrosis ratio (n = {num_sim}) for \nsignal length = {duration} days')
     ax.set_ylim([0,1])
 
     if noise_type == 'poisson':
@@ -444,7 +444,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
         _, ax2 = plt.subplots()
         sns.heatmap(fibrosis_count_grid, xticklabels = np.round(gamma_standard_deviations_scaled, 2), yticklabels = np.round(gamma_means_scaled, 2),
                     annot = True, cmap = 'Reds', ax = ax2)
-        ax2.set_title(f'Fibrosis ratio (n = {num_sim})')
+        ax2.set_title(f'Fibrosis ratio (n = {num_sim}) for \nsignal length = {duration} days')
         ax2.set_xlabel('std in $A_0$')
         ax2.set_ylabel('mean in $A_0$')
         ax2.set_aspect('equal')
