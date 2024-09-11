@@ -430,7 +430,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
                 fibrosis_counts = np.append(fibrosis_counts, fibrosis_count)
                 fibrosis_count_grid[i, j] = fibrosis_count
             ax.set_xlabel('std in $A_0')
-            ax.plot(gamma_standard_deviations_scaled, fibrosis_counts, label = f'mean = {mean}')
+            ax.plot(gamma_standard_deviations_scaled, fibrosis_counts, label = f'mean = {mean/A_0}')
             ax.scatter(gamma_standard_deviations_scaled, fibrosis_counts, color = 'red')
             ax.legend(loc = 'upper right')
 
@@ -441,6 +441,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
         ax2.set_title(f'Fibrosis ratio (n = {num_sim})')
         ax2.set_xlabel('std in $A_0$')
         ax2.set_ylabel('mean in $A_0$')
+        ax2.set_aspect('equal')
 
     else:
         standard_deviations = np.array(standard_deviations)
