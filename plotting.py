@@ -201,6 +201,7 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     plt.xlabel("Amplitudes (cell/day)")
     plt.ylabel("Time (days)")
     plt.scatter(amplitudes, crossing_times, color = 'blue')
+    plt.title("Time to reach fibrosis basin under constant injury signal")
     plt.plot(amplitudes, crossing_times, color = 'red')
     amplitudes = [f"{amplitude:.2e}" for amplitude in amplitudes]
     print(f'Amplitudes {amplitudes} (cells/day) \nTime to crossing separatrix {crossing_times} (days)')
