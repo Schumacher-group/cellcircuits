@@ -414,28 +414,33 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
         ax.plot(poisson_lams/A_0, fibrosis_counts)
         ax.scatter(poisson_lams/A_0, fibrosis_counts, color = 'red')
     elif noise_type == 'gamma':
-        #transform means, variances to parameters for the gamma distribution which has mean = alpha/beta and sigma**2 = alpha/beta**2
-        gamma_alphas = np.array([mu**2/std**2 for mu in gamma_means for std in gamma_standard_deviations])
-        gamma_betas = np.array([mu/std**2 for mu in gamma_means for std in gamma_standard_deviations])
-        fibrosis_count_grid = np.zeros((len(gamma_alphas), len(gamma_betas))) 
-        for i, alpha in enumerate(gamma_alphas):
+        gamma_means_scaled = [mean/A_0 for mean in gamma_means]
+        gamma_standard_deviations_scaled = [std/A_0 for std in gamma_standard_deviations]
+
+        fibrosis_count_grid = np.zeros((len(gamma_means), len(gamma_standard_deviations))) 
+        for i, mean in enumerate(gamma_means):
             fibrosis_counts = np.array([])
-            for j, beta in enumerate(gamma_betas):
+            for j, std in enumerate(gamma_standard_deviations):
+                #transform means, variances to parameters for the gamma distribution which has mean = alpha/beta and sigma**2 = alpha/beta**2
+                alpha = mean**2/std**2
+                beta = mean/std**2
+
                 fibrosis_count = get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
                                                     start_point, duration, num_sim, noise_type, amplitude, alpha = alpha, beta = beta)
                 fibrosis_counts = np.append(fibrosis_counts, fibrosis_count)
                 fibrosis_count_grid[i, j] = fibrosis_count
-            ax.set_xlabel('beta in $A_0')
-            ax.plot(gamma_betas, fibrosis_counts, label = f'alpha = {alpha}')
-            ax.scatter(gamma_betas, fibrosis_counts, color = 'red')
-            ax.legend(loc = 'upper left')
+            ax.set_xlabel('std in $A_0')
+            ax.plot(gamma_standard_deviations_scaled, fibrosis_counts, label = f'mean = {mean}')
+            ax.scatter(gamma_standard_deviations_scaled, fibrosis_counts, color = 'red')
+            ax.legend(loc = 'upper right')
 
+        
         _, ax2 = plt.subplots()
-        sns.heatmap(fibrosis_count_grid, xticklabels = np.round(gamma_betas, 4), yticklabels = np.round(gamma_alphas/A_0, 2),
+        sns.heatmap(fibrosis_count_grid, xticklabels = np.round(gamma_standard_deviations_scaled, 2), yticklabels = np.round(gamma_means_scaled, 2),
                     annot = True, cmap = 'Reds', ax = ax2)
         ax2.set_title(f'Fibrosis ratio (n = {num_sim})')
-        ax2.set_xlabel('beta')
-        ax2.set_ylabel('alpha in $A_0$')
+        ax2.set_xlabel('std in $A_0$')
+        ax2.set_ylabel('mean in $A_0$')
 
     else:
         standard_deviations = np.array(standard_deviations)
