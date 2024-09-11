@@ -397,7 +397,7 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_p
     return fibrosis_count/num_sim        
 
 def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start_point, duration, num_sim, noise_type, amplitude, standard_deviations = [0],
-                         poisson_lams = [0], gamma_means = [1], gamma_variances = [1]):
+                         poisson_lams = [0], gamma_means = [1], gamma_standard_deviations = [1]):
     
     fibrosis_counts = np.array([])
     _, ax = plt.subplots()
@@ -415,8 +415,8 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
         ax.scatter(poisson_lams/A_0, fibrosis_counts, color = 'red')
     elif noise_type == 'gamma':
         #transform means, variances to parameters for the gamma distribution which has mean = alpha/beta and sigma**2 = alpha/beta**2
-        gamma_alphas = np.array([mu**2/var for mu in gamma_means for var in gamma_variances])
-        gamma_betas = np.array([mu/var for mu in gamma_means for var in gamma_variances])
+        gamma_alphas = np.array([mu**2/std**2 for mu in gamma_means for std in standard_deviations])
+        gamma_betas = np.array([mu/std**2 for mu in gamma_means for std in gamma_standard_deviations])
         fibrosis_count_grid = np.zeros((len(gamma_alphas), len(gamma_betas))) 
         for i, alpha in enumerate(gamma_alphas):
             fibrosis_counts = np.array([])
