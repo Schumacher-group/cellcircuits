@@ -27,6 +27,8 @@ def CSF_PDGF_steady(x):
     #In case the number of macrophages drops below 0 (e.g. in the numerical integration) interpret it as 0
     if M < 0:
         M = 0
+    if mF < 0:
+        mF = 0
 
     # equation for steady CSF is -gamma*(CSF)**2 + CSF*(beta1*mF-alpha1*M-k2*gamma) + beta1*k2*mF
     # equation for steady PDGF is  -gamma*(PDGF)**2 + PDGF * (beta2*M + beta3*mF -alpha2 * mF- gamma * k1) +k1*(beta2*M+beta3*mF)
@@ -214,9 +216,9 @@ def time_taken(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M):
     for i in range(len(traj)):
         if ((traj[i][0]) ** 2 + (traj[i][1]) ** 2) < 1e-3:
             return t[i]
-        else:
-            print("\033[91mWarning: The calculated trajectory time is higher than calculated. Try to adjust the time intervall.\033[0m")
-            return t[-1]
+        
+    print("\033[91mWarning: The calculated trajectory time is higher than calculated. Try to adjust the time intervall.\033[0m")
+    return t[-1]
 
 def time_taken_rd(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M): 
     return round(time_taken(traj, t, hotfibrosis_mF_M, unstable_fixed_point_mF_M), 2)
