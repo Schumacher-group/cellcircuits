@@ -42,7 +42,7 @@ def simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajecto
 
 def single_euler_maruyama_simulation(deterministic_derivative, noise_function, t_trajectory, x0):
     t0 = t_trajectory[0]
-    dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
+    dt = t_trajectory[1] - t_trajectory[0]
 
     t_steps = np.linspace(t0, t_trajectory[-1], t_trajectory.size)
 
