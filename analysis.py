@@ -152,11 +152,6 @@ def unstable_fixed_point_hotfibrosis_mF_M(mFM_space):
     #find mF_M concentrations at hotfibrosis point
     hotfibrosis_mF_M = nullcline_mF(hotfibrosis_mF)
     
-    
-    #unstable_fixed_point_CSF_PDGF = CSF_PDGF_steady(unstable_fixed_point_mF)
-    #unstable_fixed_point = unstable_fixed_point_mF_M + unstable_fixed_point_CSF_PDGF
-    #hotfibrosis_CSF_PDGF = CSF_PDGF_steady(hotfibrosis_mF)
-    #hotfibrosis = hotfibrosis_mF_M + hotfibrosis_CSF_PDGF
 
     return (unstable_fixed_point_mF_M, hotfibrosis_mF_M)
 
@@ -171,11 +166,11 @@ def cold_fibr():
     # rearranged from eqns in transparent methods
     coldPDGF = np.roots(PDGF_coeff)
     coldmF = []
-    #print("\n Roots of PDGF:", coldPDGF,"\n")
+    
     for coldroot in coldPDGF:
         if np.isreal(coldroot) and coldroot >= 0:
             coldmF.append(K * ((lambda1 - mu1) / (lambda1) - (mu1 * k1) / (lambda1 * np.real(coldroot)))) # finds mF value given PDGF value
-    #print("\n coldmF:", coldmF,"\n")
+    
     return coldmF
 
 #Returns true if trajectory crosses seperatrix and will then move to the hot fibrosis state
