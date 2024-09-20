@@ -23,21 +23,23 @@ def euler_maruyama(deterministic_derivative, noise_function ,t_steps, x0, dt):
 
 
 #Can be used if you want to only use non-parallelized code
-def simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim, axis):
+def simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim):
     t0 = t_trajectory[0]
     dt = (t_trajectory[-1] - t0)/(t_trajectory.size)
 
     t_steps = np.linspace(t0, t_trajectory[-1], t_trajectory.size)
 
     end_points = np.zeros((num_sim, 2))
+    trajectories = []
 
     for num in range(num_sim):
         end_point, x = euler_maruyama(deterministic_derivative, noise_function, t_steps, x0, dt)
 
         end_points[num] = end_point
-        axis.plot(x[:,0], x[:,1])
-    
-    return end_points
+        trajectories.append(x)
+
+    trajectories = np.array(trajectories)
+    return end_points, trajectories
 
 
 def single_euler_maruyama_simulation(deterministic_derivative, noise_function, t_trajectory, x0):
