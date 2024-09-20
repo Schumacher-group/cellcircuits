@@ -8,7 +8,12 @@ from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
     cold_fibr, mF_M_rates_array, check_hot_fibrosis, find_first_crossing_index, time_taken_rd, array_statistics)
 from Signal_functions import Signal, adjusted_derivatives_with_signal
-from euler_maruyama_method import simulate_euler_maruyama, single_euler_maruyama_simulation
+
+#uncomment if non-parallelized simulatiing is desired or enough
+#and change the appropriate code sections below
+
+#from euler_maruyama_method import simulate_euler_maruyama
+from euler_maruyama_method import single_euler_maruyama_simulation
 
 from joblib import Parallel, delayed
 
@@ -136,7 +141,7 @@ def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, s
     ax1.set_yticklabels(y_tick_labels)
 
     '''
-    For visualization of the behaviour on the x/y_axis one can change the 'log' to symlog for the x and yscale, add linthresh
+    For visualization of the behaviour on the x/y_axis one can change the 'log' to 'symlog' for the xscale and yscale, add linthresh
     and change the lower x/y_lim to 0
     '''
     ax2.plot(separatrix_left[:, 0], separatrix_left[:, 1], 'black')
@@ -254,7 +259,7 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     ax1.set_yticklabels(y_tick_labels)
 
     t_signal = np.linspace(0, endpoint_of_signal + 1, 100)
-    ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'Deterministic signal', linestyle = '--')
+    #ax1.plot(t_signal, signal_function(t_signal)/A_0, color = 'red', label = 'Deterministic signal', linestyle = '--')
     
 
     if noise_type == 'poisson':
@@ -282,8 +287,8 @@ def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_sepa
     '''
     Using Euler-Maruyama method to solve the stochastic differential equation
     '''
-    #non parallelized version of the Euler-Maruyama method
-    #end_points = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x0, num_sim = num_sim, axis = ax2)
+    #usable for a non parallelized version of the Euler Maruyama method
+    #end_points, trajectories = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x_initial, num_sim = num_sim)
 
 
     #Parallelized version for Euler Maruyama method
@@ -396,6 +401,9 @@ def get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial, start_p
 
     separatrix_left, separatrix_right = calculate_separatrix(unstable_fixed_point_mF_M, t_separatrix)
 
+    #usable for a non parallelized version of the Euler Maruyama method
+    #end_points, trajectories = simulate_euler_maruyama(deterministic_derivative, noise_function, t_trajectory, x_initial, num_sim = num_sim)
+
     #Parallelized version for Euler Maruyama method
     def run_parallel_simulation(num):
         return single_euler_maruyama_simulation(deterministic_derivative, noise_function,
@@ -432,7 +440,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
             fibrosis_counts = np.append(fibrosis_counts, 
                                         get_fibrosis_ratio(mFM_space, t_trajectory, t_separatrix, x_initial,
                                                            start_point, duration, num_sim, noise_type, amplitude, lam = lam))
-        ax.set_xlabel('lambda in $A_0')
+        ax.set_xlabel('lambda in $10^6$')
         ax.plot(poisson_lams/A_0, fibrosis_counts)
         ax.scatter(poisson_lams/A_0, fibrosis_counts, color = 'red')
     elif noise_type == 'gamma':
@@ -451,7 +459,7 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
                                                     start_point, duration, num_sim, noise_type, amplitude, alpha = alpha, beta = beta)
                 fibrosis_counts = np.append(fibrosis_counts, fibrosis_count)
                 fibrosis_count_grid[i, j] = fibrosis_count
-            ax.set_xlabel('std in $A_0$')
+            ax.set_xlabel('std in $10^6$')
             ax.plot(gamma_standard_deviations_scaled, fibrosis_counts, label = f'mean = {mean/A_0}')
             ax.scatter(gamma_standard_deviations_scaled, fibrosis_counts, color = 'red')
             ax.legend(loc = 'upper right')
@@ -461,8 +469,8 @@ def plot_fibrosis_ratios(mFM_space, t_trajectory, t_separatrix, x_initial, start
         sns.heatmap(fibrosis_count_grid, xticklabels = np.round(gamma_standard_deviations_scaled, 2), yticklabels = np.round(gamma_means_scaled, 2),
                     annot = True, cmap = 'Reds', ax = ax2)
         ax2.set_title(f'Fibrosis ratio (n = {num_sim}) for \nsignal length = {duration} days')
-        ax2.set_xlabel('std in $A_0$')
-        ax2.set_ylabel('mean in $A_0$')
+        ax2.set_xlabel('std in $10^6$')
+        ax2.set_ylabel('mean in $10^6$')
         ax2.set_aspect('equal')
 
     else:
