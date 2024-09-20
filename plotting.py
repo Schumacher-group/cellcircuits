@@ -123,7 +123,7 @@ def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, s
         if check_hot_fibrosis(end_point, separatrix_left_reverse, separatrix_right):
             return True
         else:
-            False
+            return False
 
 
     fig, (ax1, ax2) = plt.subplots(1, 2)
