@@ -7,7 +7,7 @@ from parameters import *
 from analysis import (
     nullcline_mF, nullcline_M, unstable_fixed_point_hotfibrosis_mF_M, calculate_separatrix ,
     cold_fibr, mF_M_rates_array, check_hot_fibrosis, find_first_crossing_index, time_taken_rd, array_statistics)
-from Signal_functions import Signal, adjusted_derivatives_with_signal
+from signal_functions import Signal, adjusted_derivatives_with_signal
 
 #uncomment if non-parallelized simulatiing is desired or enough
 #and change the appropriate code sections below
