@@ -210,8 +210,8 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     plt.scatter(amplitudes, crossing_times, color = 'blue')
     plt.title("Time to reach fibrosis basin under constant injury signal")
 
-    plt.xticks(np.arange(0, 2*A_0, 0.1*A_0))
-    plt.yticks(np.arange(0, 9, 0.5))
+    #plt.xticks(np.arange(0, 2*A_0, 0.1*A_0))
+    #plt.yticks(np.arange(0, 9, 0.5))
     plt.grid(True)
     plt.plot(amplitudes, crossing_times, color = 'red')
 
@@ -219,12 +219,11 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     amplitudes_scaled = [amp/A_0 for amp in amplitudes]
     data = np.vstack([amplitudes_scaled, crossing_times]).T  # Stack x and y as two columns
 
-    df = pd.DataFrame(data, columns=['Amplitudes scaled', 'Crossing times'])
+    df = pd.DataFrame(data, columns=['Amplitudes scaled (10^6 cells/day)', 'Crossing times (days)'])
 
     # Write the dataframe to an Excel file
     df.to_excel("output_data.xlsx", index=False)
 
-    print(df)
 
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim, noise_type = 'gaussian'):
     signal_function = signal.signal_function
