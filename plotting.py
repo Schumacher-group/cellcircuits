@@ -131,11 +131,11 @@ def signals_and_trajectories(mFM_space, t_trajectory, t_separatrix, x_initial, s
 
     # setting up injury plots
     ax1.set_xlim(0,endpoint_of_signal + 1)
-    ax1.set_ylim(-2,5)
-    #ax1.set_aspect('equal')
+    ax1.set_ylim(-1,4)
+    ax1.set_aspect('equal')
     ax1.set_xlabel('time (days)')
     ax1.set_ylabel('I(t)')
-    y_ticks = np.arange(-2, 5)
+    y_ticks = np.arange(0, 4)
     y_tick_labels = [f'{i}*$A_0$'if i != 0 else '0' for i in y_ticks]
     ax1.set_yticks(y_ticks)
     ax1.set_yticklabels(y_tick_labels)
