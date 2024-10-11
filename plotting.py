@@ -222,7 +222,7 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     df = pd.DataFrame(data, columns=['Amplitudes scaled (10^6 cells/day)', 'Crossing times (days)'])
 
     # Write the dataframe to an Excel file
-    df.to_excel("output_data.xlsx", index=False)
+    df.to_excel("amplitude_separatrix_crossing_time.xlsx", index=False)
 
 
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim, noise_type = 'gaussian'):
