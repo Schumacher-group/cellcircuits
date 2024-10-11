@@ -17,6 +17,8 @@ from euler_maruyama_method import single_euler_maruyama_simulation
 
 from joblib import Parallel, delayed
 
+#For handling data
+import pandas as pd
 
 def plot_nullclines_fixed_points_separatrix(mFM_space, mFnull1, mFnull2, mFnull3, xsmooth, ysmooth, t_separatrix):
     plt.figure()
@@ -213,23 +215,16 @@ def amplitude_duration_dependence_for_hot_fibrosis(mFM_space, t_trajectory, t_se
     plt.grid(True)
     plt.plot(amplitudes, crossing_times, color = 'red')
 
-    plt.figure()
-    plt.axis('off')
 
     amplitudes_scaled = [amp/A_0 for amp in amplitudes]
     data = np.vstack([amplitudes_scaled, crossing_times]).T  # Stack x and y as two columns
-    table_data = [[f"{xi:.2f}", f"{yi:.2f}"] for xi, yi in data]  # Format values
 
-    # Add a table
-    table = plt.table(cellText=table_data,
-                    colLabels=["Amplitudes in 10^6 cell/day", "Time in days"],
-                    cellLoc="center",
-                    loc="center",  # Position table in the center
-                    )  
+    df = pd.DataFrame(data, columns=['Amplitudes scaled', 'Crossing times'])
 
-    table.auto_set_font_size(False)
-    table.set_fontsize(10)
-    table.scale(1, 1) #width and height of table
+    # Write the dataframe to an Excel file
+    df.to_excel("output_data.xlsx", index=False)
+
+    print(df)
 
 def plot_random_signal_trajectory_fibrosis_count(mFM_space, t_trajectory, t_separatrix, x_initial, signal: Signal, num_sim, noise_type = 'gaussian'):
     signal_function = signal.signal_function
