@@ -2,11 +2,14 @@ from my_function import *
 import numpy as np
 import matplotlib.pyplot as plt
 
-# build heaviside function
+# Initialize analyzer
+analyzer = CellDynamicsAnalyzer(params)
+
+# Build heaviside function
 def heaviside_function(t, starts=[0], durations=[2], amplitude=1e6):
     return sum(amplitude * (t >= start) * (t < start + duration) for start, duration in zip(starts, durations))
 
-# ode system with pulse input
+# ODE system with pulse input
 def modified_mf_m_ode(y, t, p=params, pulse_type='transient'):
     mF, M = y
     if pulse_type == 'transient':
@@ -18,24 +21,36 @@ def modified_mf_m_ode(y, t, p=params, pulse_type='transient'):
     else:
         I_t = 0
 
-    csf = csf_steady(mF, M, p)
-    pdgf = pdgf_steady(mF, M, p)
+    csf = CellDynamicsAnalyzer.csf_steady(mF, M, p)
+    pdgf = CellDynamicsAnalyzer.pdgf_steady(mF, M, p)
     if csf and pdgf:
         dmF = mF * ((p['lambda1'] * pdgf[0] / (p['k1'] + pdgf[0])) * (1 - mF / p['K']) - p['mu1'])
         dM = I_t + M * (p['lambda2'] * csf[0] / (p['k2'] + csf[0]) - p['mu2'])
         return [dmF, dM]
     else:
         return [0, 0]
-    
-
-# solve odes
+# Solve ODEs
 y0 = [1, 1]
 t = np.linspace(0, 80, 500)
 sol_transient = odeint(modified_mf_m_ode, y0, t, args=(params, 'transient'))
 sol_repetitive = odeint(modified_mf_m_ode, y0, t, args=(params, 'repetitive'))
 sol_prolonged = odeint(modified_mf_m_ode, y0, t, args=(params, 'prolonged'))
 
-# plot results
+# Get separatrix data from the analyzer
+analysis_results = analyzer.analyze_system()
+separatrices = analysis_results['separatrices']
+fixed_points = analysis_results['fixed_points']
+
+# Combine separatrices for plotting (for backward compatibility)
+if separatrices and len(separatrices) >= 2:
+    separatrix_left = separatrices[0]
+    separatrix_right = separatrices[1]
+else:
+    # Fallback to combined separatrix
+    all_sep = np.vstack(separatrices) if separatrices else np.array([[1, 1]])
+    separatrix_left = separatrix_right = all_sep
+
+# Plot results
 plt.figure(figsize=(15, 6))
 
 # M
